@@ -16,7 +16,7 @@ Built by Susan, this app lets you:
 ## 🚀 How to Use
 
 1. Open the app:  
-   [Launch Emerald Fire Book Vault App](https://emeraldfire999.github.io/EmeraldFireBookVaultApp/)
+   [Launch Emerald Fire Book Vault App](https://emeraldfire999.github.io/index/)
 
 2. Name your library (you’ll only do this once)
 
