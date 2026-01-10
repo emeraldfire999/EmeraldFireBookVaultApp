@@ -409,34 +409,45 @@ button:hover {
         <!-- ⭐ AUTHORS -->
         <label>Authors</label>
         <input id="author" class="wide-input">
+		
+		<label>Genre</label>
+<input id="genre" class="wide-input">
 
         <!-- ⭐ SOURCE + STATUS (side by side) -->
-        <div class="row">
-            <div class="half">
-                <label>Source</label>
-                <select id="source" class="small-select">
-                    <option>Amazon Purchase</option>
-                    <option>Kindle Unlimited</option>
-                    <option>BookFunnel</option>
-                    <option>StoryOrigin</option>
-                    <option>ARC</option>
-                    <option>Newsletter Freebie</option>
-                    <option>Personal Document</option>
-                </select>
-            </div>
+<div class="row">
+    <div class="third">
+        <label>Source</label>
+        <select id="source" class="small-select">
+            <option>Amazon Purchase</option>
+            <option>Kindle Unlimited</option>
+            <option>BookFunnel</option>
+            <option>StoryOrigin</option>
+            <option>ARC</option>
+            <option>Newsletter Freebie</option>
+            <option>Personal Document</option>
+        </select>
+    </div>
 
-            <div class="half">
-                <label>Status</label>
-                <select id="status" class="small-select">
-                    <option>TBR</option>
-                    <option>Currently Reading</option>
-                    <option>Finished</option>
-                    <option>DNF</option>
-                    <option>On Hold</option>
-                    <option>Re-Reading</option>
-                </select>
-            </div>
-        </div>
+    <div class="third">
+        <label>Status</label>
+        <select id="status" class="small-select">
+            <option>TBR</option>
+            <option>Currently Reading</option>
+            <option>Finished</option>
+            <option>DNF</option>
+            <option>On Hold</option>
+            <option>Re-Reading</option>
+        </select>
+    </div>
+
+    <div class="third">
+        <label>Reviewed</label>
+        <select id="reviewed" class="small-select">
+            <option>No</option>
+            <option>Yes</option>
+        </select>
+    </div>
+</div>
 
         <!-- ⭐ SERIES NAME + NUMBER -->
         <div class="row">
@@ -520,6 +531,11 @@ button:hover {
         <button onclick="sortBooks('genreZA')">Genre Z–A</button>
         <button onclick="sortBooks('status')">Status</button>
 		<button onclick="sortBooks('dateReceived')">Date Received</button>
+		
+		<!-- ⭐ REMOVE AFTER CLEAN UP ⭐ -->
+		<button onclick="deleteBooksWithoutGenre()" class="delete-btn">
+    Delete Books Without Genre
+</button>
     </div>
 </div>
 
@@ -638,7 +654,7 @@ function editBook(index) {
     document.getElementById('cover').value = book.cover || '';
     document.getElementById('link').value = book.link || '';
     document.getElementById('status').value = book.status || '';
-
+    document.getElementById('reviewed').value = book.reviewed || 'No';
     showTab('inputTab');
 }
 
@@ -660,6 +676,7 @@ function renderBooks() {
     <h3>${book.title}</h3>
     <p>${book.author}</p>
     <p>${book.status}</p>
+	<p>Reviewed: ${book.reviewed || "No"}</p>
 
 <!-- ⭐ BOOK LINK ⭐ -->
     ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
@@ -757,6 +774,21 @@ function deleteBook(index) {
     localStorage.setItem('books', JSON.stringify(books));
     renderBooks();
 }
+
+// ⭐ DELETE  THIS AFTER CLEAN UP ⭐
+function deleteBooksWithoutGenre() {
+    if (!confirm("Delete ALL books that have no genre?")) return;
+
+    books = books.filter(book =>
+        book.genre && book.genre.trim() !== ""
+    );
+
+    localStorage.setItem('books', JSON.stringify(books));
+    renderBooks();
+
+    alert("Books without a genre have been removed.");
+}
+
 
 // ⭐ FLIP CARD ⭐
 function flipCard(index) {
@@ -975,6 +1007,7 @@ function renderFilteredBooks(filteredBooks) {
 <div class="book-card-back" style="display:none;">
     <h3>${book.title}</h3>
     <p><strong>Genres:</strong> ${book.genre}</p>
+	<p><strong>Reviewed:</strong> ${book.reviewed}</p>
     <div class="back-description-container">
         <p class="back-description">${book.description || "No description added yet."}</p>
     </div>
@@ -1040,5 +1073,4 @@ showTab('libraryTab');
     Powered by the Emerald Fire Book Vault App — v1.0
 </p>
 </body>
-
 </html>
