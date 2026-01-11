@@ -225,6 +225,19 @@ textarea {
 .half { flex: 1; }
 .wide { flex: 2; }
 .small { width: 80px; }
+
+.placeholder-cover {
+    width: 100%;
+    height: 260px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-weight: bold;
+    font-size: 14px;
+}
     </style>
 </head>
 <body>
@@ -386,7 +399,6 @@ textarea {
 
     <!-- ⭐ SORT PANEL ⭐ -->
     <div id="sortPanel" class="library-panel">
-        <h3>Sort Your Library</h3>
 
         <div id="sortOptions" class="sort-options" style="display:none;">
             <button onclick="sortBooks('printDate')">Print Date</button>
@@ -514,6 +526,20 @@ function editBook(index) {
     showTab('inputTab');
 }
 
+// ⭐ FORMAT DATE FOR DISPLAY ⭐
+function formatDisplayDate(dateString) {
+    if (!dateString) return "—";
+
+    const date = new Date(dateString);
+    if (isNaN(date)) return dateString; // fallback if something weird comes in
+
+    return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric"
+    });
+}
+
 // ⭐ RENDER BOOKS ⭐
 function renderBooks() {
     const library = document.getElementById('bookList');
@@ -529,15 +555,20 @@ function renderBooks() {
 <!-- ⭐ FRONT OF CARD ⭐ -->
 <div class="book-card-front">
 
-     <img src="${book.cover}" loading="lazy" alt="Cover">
+    <img src="${book.cover}" 
+         loading="lazy" 
+         alt="Cover"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+
+    <div class="placeholder-cover" style="display:none;">No Cover</div>
+
     <h3>${book.title}</h3>
     <p class="author">${book.author}</p>
     <p class="status">${book.status}</p>
 
-    <!-- ⭐ example ⭐ DATE BLOCK ADDED ⭐ -->
     <div class="book-dates">
-        <p><strong>Received:</strong> ${book.dateReceived || "—"}</p>
-        <p><strong>Read:</strong> ${book.dateRead || "—"}</p>
+        <p><strong>Received:</strong> ${formatDisplayDate(book.dateReceived)}</p>
+        <p><strong>Read:</strong> ${formatDisplayDate(book.dateRead)}</p>
         <p><strong>Reviewed:</strong> ${book.reviewed === "Yes" ? "Yes" : "No"}</p>
     </div>
 
@@ -819,69 +850,76 @@ document.getElementById('searchInput').addEventListener('input', function () {
     );
 
     renderFilteredBooks(filtered);
-
-    // Clear search bar after use
-    this.value = '';
 });
 
 // ⭐ RENDER FILTERED RESULTS ⭐
+
 function renderFilteredBooks(filteredBooks) {
     const library = document.getElementById('bookList');
     library.innerHTML = "";
 
-    filteredBooks.forEach((book, index) => {
+    filteredBooks.forEach((book) => {
+        const realIndex = books.indexOf(book);  // ⭐ FIXED: correct index
+
         const bookCard = document.createElement('div');
         bookCard.className = "book-item";
-        bookCard.id = `book-${index}`;
+        bookCard.id = `book-${realIndex}`;
 
         bookCard.innerHTML = `
 
+
+
 <!-- ⭐ FRONT OF CARD ⭐ -->
 <div class="book-card-front">
-    <img src="${book.cover}" alt="Cover">
+    <img src="${book.cover}" 
+     loading="lazy" 
+     alt="Cover"
+     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+
+    <div class="placeholder-cover" style="display:none;">No Cover</div>
     <h3>${book.title}</h3>
     <p class="author">${book.author}</p>
     <p class="status">${book.status}</p>
 
-    <!-- ⭐ DATES ⭐ -->
     <div class="book-dates">
         <p><strong>Received:</strong> ${book.dateReceived || "—"}</p>
         <p><strong>Read:</strong> ${book.dateRead || "—"}</p>
         <p><strong>Reviewed:</strong> ${book.reviewed === "Yes" ? "Yes" : "No"}</p>
     </div>
 
-    <!-- ⭐ BOOK LINK ⭐ -->
     ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
 
-    <!-- ⭐ BUTTONS ⭐ -->
     <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${index})">Edit</button>
-        <button class="delete-btn" onclick="event.stopPropagation(); deleteBook(${index})">Delete</button>
+        <button onclick="event.stopPropagation(); editBook(${realIndex})">Edit</button>
+        <button class="delete-btn" onclick="event.stopPropagation(); deleteBook(${realIndex})">Delete</button>
     </div>
 </div>
+
+
 
 <!-- ⭐ BACK OF CARD ⭐ -->
 <div class="book-card-back" style="display:none;">
     <h3>${book.title}</h3>
     <p><strong>Genres:</strong> ${book.genre}</p>
-    <p><strong>Reviewed:</strong> ${book.reviewed}</p>
 
     <div class="back-description-container">
         <p class="back-description">${book.description || "No description added yet."}</p>
     </div>
 
     <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${index})">Edit</button>
-        <button onclick="event.stopPropagation(); flipCard(${index})">Back</button>
+        <button onclick="event.stopPropagation(); editBook(${realIndex})">Edit</button>
+        <button onclick="event.stopPropagation(); flipCard(${realIndex})">Back</button>
     </div>
 </div>
 
         `;
 
-        bookCard.onclick = () => flipCard(index);
+        bookCard.onclick = () => flipCard(realIndex);
         library.appendChild(bookCard);
     });
 }
+
+
 
 // ⭐ SAVE LIBRARY NAME ⭐
 function saveLibraryName() {
