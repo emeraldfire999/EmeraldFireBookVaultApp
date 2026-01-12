@@ -764,7 +764,7 @@ function importCSV() {
             const asin = safe(getValue(row, headers, "ISBN / ASIN (Amazon ID)"));
 
             const book = {
-                title: safe(getValue(row, headers, "Title")),
+                title: safe(getValue(row, headers, "Title")) || "Title unavailable",
                 author: safe(getValue(row, headers, "(First) Author")),
                 genre: safe(getValue(row, headers, "Genres")),
                 source: safe(getValue(row, headers, "RelationshipSubtype")),
@@ -970,7 +970,7 @@ showTab('libraryTab');
     color:#003300;
     text-shadow: 0 0 6px #66ff66;
 ">
-    Powered by the Emerald Fire Book Vault App — v3.0
+    Powered by the Emerald Fire Book Vault App — v3.1 1-12-2026
 </p>
 </body>
 </html>
