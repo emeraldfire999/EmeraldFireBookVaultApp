@@ -915,11 +915,15 @@ function renderBooks() {
     });
 }
 
+
+/* ========================= RENDER FILTERED BOOKS ========================= */
 function renderFilteredBooks(filteredBooks) {
     const library = document.getElementById('bookList');
     library.innerHTML = "";
 
-    filteredBooks.forEach((book, index) => {
+    filteredBooks.forEach(book => {
+        const realIndex = books.indexOf(book);
+
         const bookCard = document.createElement('div');
         bookCard.className = "book-item";
 
@@ -946,8 +950,8 @@ function renderFilteredBooks(filteredBooks) {
     ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
 
     <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${index})">Edit</button>
-        <button class="delete-btn" onclick="event.stopPropagation(); deleteBook(${index})">Delete</button>
+        <button onclick="event.stopPropagation(); editBook(${realIndex})">Edit</button>
+        <button class="delete-btn" onclick="event.stopPropagation(); deleteBook(${realIndex})">Delete</button>
     </div>
 
 </div>
@@ -961,13 +965,13 @@ function renderFilteredBooks(filteredBooks) {
     </div>
 
     <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${index})">Edit</button>
-        <button onclick="event.stopPropagation(); flipCard(${index})">Back</button>
+        <button onclick="event.stopPropagation(); editBook(${realIndex})">Edit</button>
+        <button onclick="event.stopPropagation(); flipCard(${realIndex})">Back</button>
     </div>
 </div>
         `;
 
-        bookCard.onclick = () => flipCard(index);
+        bookCard.onclick = () => flipCard(realIndex);
 
         library.appendChild(bookCard);
     });
@@ -1055,7 +1059,7 @@ renderBooks();
     color:#003300;
     text-shadow: 0 0 6px #66ff66;
 ">
-    Powered by the Emerald Fire Book Vault App — v4.2 1‑13‑2026
+    Powered by the Emerald Fire Book Vault App — v4.0 1‑13‑2026
 </p>
 
 </body>
