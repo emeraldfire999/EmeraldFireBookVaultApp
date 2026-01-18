@@ -1,4 +1,5 @@
-🌿Welcome to the Emerald Fire Book Vault App — a magical, personal library tool for organizing and exploring your digital books.
+🌿 Emerald Fire Book Vault App
+🌿 Welcome to the Emerald Fire Book Vault App — a magical, personal library tool for organizing and exploring your digital books.
 Built by Susan, this app lets you:
 • 	📚 Add books with title, authors, source, status, series info, dates, and links
 • 	🔍 Search and sort your collection by title, author, genre, or status
@@ -34,15 +35,15 @@ The  file is intentionally excluded from the repository.
 
 🛠 Tech Details
 • 	Built with HTML, CSS, and JavaScript
-• 	Uses  to save your data privately
-• 	Fully offline-capable
+• 	Uses localStorage to save your data privately
+• 	Fully offline‑capable
 • 	Hosted on GitHub Pages
 
 ✨ Version
-v1.0 — First public release
+v4.0 — First public release
 More polish and features coming soon!
 
 💬 Questions or Feedback?
 Feel free to fork the repo, open an issue, or reach out via blog comments.
 
-Powered by the Emerald Fire Book Vault App 🌿
+🌿 Powered by the Emerald Fire Book Vault App 🌿
