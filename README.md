@@ -1,6 +1,3 @@
-Absolutely, Susan — here is a complete, polished, ready‑to‑paste README.md that includes everything from your original version plus the new section explaining how to enable the optional Apify/Goodreads autofill.
-It’s clean, friendly, and professional — and it keeps your token safe.
-
 🌿 Emerald Fire Book Vault App
 Welcome to the Emerald Fire Book Vault App — a magical, personal library tool for organizing and exploring your digital books.
 Built by Susan, this app lets you:
