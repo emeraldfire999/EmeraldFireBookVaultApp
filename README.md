@@ -5,10 +5,15 @@ A magical, personal library tool for organizing and exploring your digital books
 Built by Susan, this app lets you:
 
 • 	📚 Add books with title, authors, source, status, series info, dates, and links
+
 • 	🔍 Search and sort your collection by title, author, genre, or status
+
 • 	🧠 Flip cards to reveal notes, reviews, and descriptions
+
 • 	🌈 Enjoy a glowing, transparent UI with custom artwork and animations
+
 • 	📥 Import books from a CSV file (Kindle, BookFunnel, etc.)
+
 • 	💾 Save everything locally — no account or server required
 
 🚀 How to Use
