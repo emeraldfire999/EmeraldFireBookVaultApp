@@ -1,5 +1,4 @@
-🌿 Emerald Fire Book Vault App
-Welcome to the Emerald Fire Book Vault App — a magical, personal library tool for organizing and exploring your digital books.
+🌿Welcome to the Emerald Fire Book Vault App — a magical, personal library tool for organizing and exploring your digital books.
 Built by Susan, this app lets you:
 • 	📚 Add books with title, authors, source, status, series info, dates, and links
 • 	🔍 Search and sort your collection by title, author, genre, or status
