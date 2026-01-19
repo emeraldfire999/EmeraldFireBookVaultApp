@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,45 +34,87 @@
             font-weight: bold;
         }
 
-        /* ⭐ TAB BAR ⭐ */
-        #tabs {
-            margin-bottom: 20px;
-            text-align: center;
-        }
+/* ⭐ NEW ICON TAB BAR (LARGE ICONS) ⭐ */
+#iconTabs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px auto;
+    max-width: 900px;   /* wider to fit larger icons */
+    gap: 20px;
+}
 
-        .tab-button {
-            background: #e0ffe0;
-            color: #004400;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 0 4px rgba(0,0,0,0.15);
-        }
+.icon-button {
+    width: 140px;       /* larger button */
+    height: 140px;      /* larger button */
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
 
-        .tab-button:hover {
-            background: #ccc;
-        }
+.icon-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 255, 100, 0.6);
+}
 
+.icon-button img {
+    width: 100%;        /* fill the button */
+    height: 100%;       /* fill the button */
+    object-fit: contain;
+    pointer-events: none;
+
+    /* ✨ Permanent Emerald Glow ✨ */
+    filter: drop-shadow(0 0 6px rgba(0, 255, 100, 0.7))
+            drop-shadow(0 0 12px rgba(0, 255, 100, 0.5));
+}
+
+/* ✨ Optional: Stronger glow on hover ✨ */
+.icon-button:hover img {
+    filter: drop-shadow(0 0 10px rgba(0, 255, 120, 0.9))
+            drop-shadow(0 0 18px rgba(0, 255, 120, 0.7));
+}
+
+/* ⭐ Hover Text ⭐ */
+.icon-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: -28px;
+    background: #e0ffe0;
+    color: #004400;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 14px;    /* slightly larger for readability */
+    white-space: nowrap;
+    box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    transition: opacity 0.2s ease;
+}
+
+.icon-button:hover .icon-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+        /* ⭐ TAB CONTENT AREA ⭐ */
         .tab-content {
             background: transparent;
             padding: 20px;
         }
 
-
-		/* ⭐ SORT BAR STYLING ⭐ */
-		#sortOptions {
-			display: flex;
-			justify-content: center;
-			flex-wrap: wrap;
-			gap: 10px;
-			margin-top: 10px;
-		}
-
-
+        /* ⭐ SORT BAR STYLING ⭐ */
+        #sortOptions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
 
         /* ⭐ BOOK GRID ⭐ */
         #bookList {
@@ -243,7 +286,7 @@
             font-size: 14px;
         }
 
-        /* ⭐ EDIT LAYOUT: form left, preview right ⭐ */
+        /* ⭐ EDIT LAYOUT ⭐ */
         .edit-layout {
             display: flex;
             gap: 20px;
@@ -303,6 +346,35 @@
             flex-direction: column;
             font-size: 12px;
         }
+
+        /* ⭐ FLOATING RETURN-TO-TOP BUTTON ⭐ */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 18px;
+            background: #e0ffe0;
+            color: #004400;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow:
+                0 0 10px rgba(0, 255, 100, 0.4),
+                0 4px 10px rgba(0,0,0,0.25);
+            z-index: 9999;
+            display: none;
+            transition: all 0.25s ease;
+        }
+
+        #scrollTopBtn:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 0 14px rgba(0, 255, 100, 0.6),
+                0 6px 14px rgba(0,0,0,0.3);
+        }
+
     </style>
 </head>
 
@@ -334,13 +406,39 @@
     </button>
 </div>
 
-<!-- ⭐ TAB BAR ⭐ -->
-<div id="tabs">
-    <button class="tab-button" onclick="showTab('libraryTab')">📚 Library</button>
-    <button class="tab-button" onclick="showLibraryPanel('searchPanel')">🔍 Search</button>
-    <button class="tab-button" onclick="showLibraryPanel('sortPanel')">🔃 Sort</button>
-    <button class="tab-button" onclick="showTab('inputTab')">➕ Input</button>
-    <button class="tab-button" onclick="showTab('importTab')">📥 Import CSV</button>
+<!-- ⭐ NEW ICON TAB BAR (replaces old text buttons) ⭐ -->
+<div id="iconTabs">
+
+    <!-- ⭐ LIBRARY ⭐ -->
+    <div class="icon-button" onclick="showTab('libraryTab')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/library.png" alt="Library">
+        <span class="icon-tooltip">Library</span>
+    </div>
+
+    <!-- ⭐ SEARCH ⭐ -->
+    <div class="icon-button" onclick="showLibraryPanel('searchPanel')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/search.png" alt="Search">
+        <span class="icon-tooltip">Search</span>
+    </div>
+
+    <!-- ⭐ SORT ⭐ -->
+    <div class="icon-button" onclick="showLibraryPanel('sortPanel')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/sort.png" alt="Sort">
+        <span class="icon-tooltip">Sort</span>
+    </div>
+
+    <!-- ⭐ INPUT ⭐ -->
+    <div class="icon-button" onclick="showTab('inputTab')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/input.png" alt="Input">
+        <span class="icon-tooltip">Input</span>
+    </div>
+
+    <!-- ⭐ IMPORT ⭐ -->
+    <div class="icon-button" onclick="showTab('importTab')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/import.png" alt="Import CSV">
+        <span class="icon-tooltip">Import CSV</span>
+    </div>
+
 </div>
 
 <!-- ⭐ IMPORT TAB ⭐ -->
@@ -364,6 +462,17 @@
 
             <!-- Local title suggestions -->
             <div id="titleSuggestions" class="suggestion-box"></div>
+
+            <!-- ⭐ AUTOFILL STATUS MESSAGE ⭐ -->
+            <div id="autofillStatus"
+                style="
+                margin-top:6px;
+                font-size:12px;
+                color:#88aa88;
+                font-style:italic;
+                text-shadow:0 0 4px rgba(80, 255, 120, 0.4);
+            ">
+            </div>
 
             <!-- ⭐ AUTHOR ⭐ -->
             <label>Author</label>
@@ -499,14 +608,14 @@
     <div id="sortPanel" class="library-panel">
 
         <div id="sortOptions" class="sort-options" style="display:none;">
+		
             <button class="tab-button" data-label="Date Received" onclick="toggleSort('dateReceived')">Date Received</button>
-			<button class="tab-button" data-label="Print Date" onclick="toggleSort('printDate')">Print Date</button>
-			<button class="tab-button" data-label="Title" onclick="toggleSort('title')">Title</button>
-			<button class="tab-button" data-label="Author" onclick="toggleSort('author')">Author</button>
-			<button class="tab-button" data-label="Genre" onclick="toggleSort('genre')">Genre</button>
-			<button class="tab-button" data-label="Status" onclick="toggleSort('status')">Status</button>
-			<button class="tab-button" data-label="Source" onclick="toggleSort('source')">Source</button>
-			
+            <button class="tab-button" data-label="Print Date" onclick="toggleSort('printDate')">Print Date</button>
+            <button class="tab-button" data-label="Title" onclick="toggleSort('title')">Title</button>
+            <button class="tab-button" data-label="Author" onclick="toggleSort('author')">Author</button>
+            <button class="tab-button" data-label="Genre" onclick="toggleSort('genre')">Genre</button>
+            <button class="tab-button" data-label="Status" onclick="toggleSort('status')">Status</button>
+            <button class="tab-button" data-label="Source" onclick="toggleSort('source')">Source</button>
         </div>
     </div>
 
@@ -515,20 +624,34 @@
         <input type="text" id="searchInput" placeholder="Search by title, author, or genre...">
     </div>
 
+    <!-- ⭐ SCROLL TO TOP BUTTON ⭐ -->
+    <button id="scrollTopBtn" onclick="scrollToTop()">⬆️ Top</button>
+
     <!-- ⭐ BOOK LIST ⭐ -->
     <div id="bookList"></div>
 </div>
 
 </body>
 
-
 <script src="config.js"></script>
-
 
 
 <script>
 let books = JSON.parse(localStorage.getItem('books')) || [];
 let editingIndex = null;
+
+/* ========================= AUTOFILL STATUS MESSAGE ========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const statusBox = document.getElementById("autofillStatus");
+    if (!statusBox) return;
+
+    if (typeof APIFY_TOKEN === "undefined") {
+        statusBox.textContent = "🔧 Autofill disabled — add config.js to enable Goodreads search.";
+    } else {
+        statusBox.textContent = "✨ Autofill enabled — live Goodreads search is active.";
+    }
+});
 
 /* ========================= LIBRARY NAME SAVE ========================= */
 function saveLibraryName() {
@@ -593,6 +716,24 @@ function showLibraryPanel(panelId) {
     }
 }
 
+// ⭐ Show button after scrolling down a bit
+window.addEventListener("scroll", () => {
+    const btn = document.getElementById("scrollTopBtn");
+    if (window.scrollY > 200) {
+        btn.style.display = "block";
+    } else {
+        btn.style.display = "none";
+    }
+});
+
+// ⭐ Smooth scroll to top
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
 /* ========================= TAB SWITCHING ========================= */
 function showTab(tabName) {
     const tabs = ['inputTab', 'libraryTab', 'importTab'];
@@ -623,6 +764,7 @@ let sortState = {
     status: 'asc',
     source: 'asc'
 };
+
 /* ========================= ADD BOOK ========================= */
 function addBook() {
 
@@ -746,8 +888,10 @@ function updatePreviewFromForm() {
 
     preview.innerHTML = `
         <div class="book-card-front">
-            ${cover ? `<img src="${cover}" loading="lazy" alt="Cover" onerror="this.style.display='none';">`
-                    : `<div class="placeholder-cover">No Cover</div>`}
+            ${cover
+                ? `<img src="${cover}" alt="Cover" onerror="this.style.display='none'">`
+                : `<div class="placeholder-cover">No Cover</div>`
+            }
 
             <h3>${title}</h3>
             <p>${author}</p>
@@ -791,17 +935,17 @@ document.getElementById("title").addEventListener("input", async function () {
 
     try {
         const response = await fetch(
-            `https://api.apify.com/v2/acts/apify~goodreads-search/run-sync?token=${APIFY_TOKEN}`,
+            `https://api.apify.com/v2/acts/emeraldfire999~my-actor-2/run-sync-get-dataset-items?token=${APIFY_TOKEN}`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query: title })
+                body: JSON.stringify({ searchTerm: title })
             }
         );
 
         const data = await response.json();
 
-        const matches = (data.items || []).slice(0, 5);
+        const matches = (data || []).slice(0, 5);
 
         if (matches.length === 0) {
             box.innerHTML = `<div class="suggestion-item">No matches found — please enter manually.</div>`;
@@ -815,6 +959,7 @@ document.getElementById("title").addEventListener("input", async function () {
         console.error("Goodreads search error:", err);
     }
 });
+
 /* ========================= SHOW BOOK CHOICES ========================= */
 function showBookChoices(matches) {
     const box = document.getElementById("bookChoices");
@@ -826,7 +971,7 @@ function showBookChoices(matches) {
         item.className = "suggestion-item";
 
         item.innerHTML = `
-            <img src="${book.imageUrl}" alt="Cover" onerror="this.style.display='none'">
+            <img src="${book.cover || ''}" alt="Cover" onerror="this.style.display='none'">
             <div class="info">
                 <strong>${book.title}</strong>
                 <span>${book.author}</span>
@@ -846,196 +991,116 @@ function showBookChoices(matches) {
 function fillFormWithBook(book) {
     document.getElementById("title").value = book.title || "";
     document.getElementById("author").value = book.author || "";
-    document.getElementById("cover").value = book.imageUrl || "";
+    document.getElementById("cover").value = book.cover || "";
     document.getElementById("link").value = book.url || "";
 
-    const dateField = document.getElementById("datePrinted");
-    if (!dateField.value && book.year) {
-        dateField.value = `${book.year}-01-01`;
+    // ⭐ Autofill print date if available
+    if (book.published) {
+        let pub = book.published;
+
+        // If it's just a year (YYYY), convert to YYYY-01-01
+        if (/^\d{4}$/.test(pub)) {
+            pub = `${pub}-01-01`;
+        }
+
+        document.getElementById("datePrinted").value = pub;
     }
 
     updatePreviewFromForm();
 }
 
+/* ========================= Middle of Script section ========================= */
+
 /* ========================= FORMAT DATE ========================= */
 function formatDisplayDate(dateString) {
     if (!dateString) return "—";
 
-    // Expecting YYYY-MM-DD from the date input
+    // Convert YYYY-MM-DD → readable format
     const parts = dateString.split("-");
     if (parts.length !== 3) return dateString;
 
-    const [year, month, day] = parts.map(Number);
-    if (!year || !month || !day) return dateString;
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
 
-    // Create a local Date (year, monthIndex, day)
-    const date = new Date(year, month - 1, day);
-
-    return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric"
-    });
+    return `${month}/${day}/${year}`;
 }
-
-// ⭐ SEARCH FILTER ⭐
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput');
-    if (!searchInput) {
-        console.warn("Search input not found in DOM.");
-        return;
-    }
-
-    searchInput.addEventListener('input', function () {
-        const query = this.value.toLowerCase();
-
-        const filtered = books.filter(book =>
-            book.title.toLowerCase().includes(query) ||
-            book.author.toLowerCase().includes(query) ||
-            book.genre.toLowerCase().includes(query)
-        );
-
-        renderFilteredBooks(filtered);
-    });
-});
 
 /* ========================= RENDER BOOKS ========================= */
 function renderBooks() {
-    const library = document.getElementById('bookList');
-    library.innerHTML = "";
+    const list = document.getElementById('bookList');
+    list.innerHTML = "";
 
-    books.forEach((book, index) => {
-        const bookCard = document.createElement('div');
-        bookCard.className = "book-item";
-        bookCard.id = `book-${index}`;
+    let filteredBooks = [...books];
 
-        bookCard.innerHTML = `
-<div class="book-card-front">
-
-    <img src="${book.cover}" 
-         loading="lazy" 
-         alt="Cover"
-         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-
-    <div class="placeholder-cover" style="display:none;">No Cover</div>
-
-    <h3>${book.title}</h3>
-    <p class="author">${book.author}</p>
-    <p class="status">${book.status}</p>
-
-    <div class="book-dates">
-        <p><strong>Received:</strong> ${formatDisplayDate(book.dateReceived)}</p>
-        <p><strong>Read:</strong> ${formatDisplayDate(book.dateRead)}</p>
-        <p><strong>Reviewed:</strong> ${book.reviewed === "Yes" ? "Yes" : "No"}</p>
-    </div>
-
-    ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
-
-    <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${index})">Edit</button>
-        <button class="delete-btn" onclick="event.stopPropagation(); deleteBook(${index})">Delete</button>
-    </div>
-
-</div>
-
-<div class="book-card-back" style="display:none;">
-    <h3>${book.title}</h3>
-    <p><strong>Genres:</strong> ${book.genre}</p>
-
-    <div class="back-description-container">
-        <p class="back-description">${book.description || "No description added yet."}</p>
-    </div>
-
-    <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${index})">Edit</button>
-        <button onclick="event.stopPropagation(); flipCard(${index})">Back</button>
-    </div>
-</div>
-        `;
-
-        bookCard.onclick = () => flipCard(index);
-
-        library.appendChild(bookCard);
-    });
-}
-
-
-/* ========================= RENDER FILTERED BOOKS ========================= */
-function renderFilteredBooks(filteredBooks) {
-    const library = document.getElementById('bookList');
-    library.innerHTML = "";
-
-    filteredBooks.forEach(book => {
-        const realIndex = books.indexOf(book);
-
-        const bookCard = document.createElement('div');
-        bookCard.className = "book-item";
-
-        bookCard.innerHTML = `
-<div class="book-card-front">
-
-    <img src="${book.cover}" 
-         loading="lazy" 
-         alt="Cover"
-         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-
-    <div class="placeholder-cover" style="display:none;">No Cover</div>
-
-    <h3>${book.title}</h3>
-    <p class="author">${book.author}</p>
-    <p class="status">${book.status}</p>
-
-    <div class="book-dates">
-        <p><strong>Received:</strong> ${formatDisplayDate(book.dateReceived)}</p>
-        <p><strong>Read:</strong> ${formatDisplayDate(book.dateRead)}</p>
-        <p><strong>Reviewed:</strong> ${book.reviewed === "Yes" ? "Yes" : "No"}</p>
-    </div>
-
-    ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
-
-    <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${realIndex})">Edit</button>
-        <button class="delete-btn" onclick="event.stopPropagation(); deleteBook(${realIndex})">Delete</button>
-    </div>
-
-</div>
-
-<div class="book-card-back" style="display:none;">
-    <h3>${book.title}</h3>
-    <p><strong>Genres:</strong> ${book.genre}</p>
-
-    <div class="back-description-container">
-        <p class="back-description">${book.description || "No description added yet."}</p>
-    </div>
-
-    <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${realIndex})">Edit</button>
-        <button onclick="event.stopPropagation(); flipCard(${realIndex})">Back</button>
-    </div>
-</div>
-        `;
-
-        bookCard.onclick = () => flipCard(realIndex);
-
-        library.appendChild(bookCard);
-    });
-}
-
-/* ========================= FLIP CARD ========================= */
-function flipCard(index) {
-    const card = document.getElementById(`book-${index}`);
-    if (!card) return;
-
-    const front = card.querySelector(".book-card-front");
-    const back = card.querySelector(".book-card-back");
-
-    if (front.style.display === "none") {
-        front.style.display = "flex";
-        back.style.display = "none";
-    } else {
-        front.style.display = "none";
-        back.style.display = "flex";
+    // ⭐ SEARCH FILTER ⭐
+    const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (searchTerm) {
+        filteredBooks = filteredBooks.filter(book =>
+            (book.title || "").toLowerCase().includes(searchTerm) ||
+            (book.author || "").toLowerCase().includes(searchTerm) ||
+            (book.genre || "").toLowerCase().includes(searchTerm)
+        );
     }
+
+    // ⭐ SORTING ⭐
+    const activeSort = Object.keys(sortState).find(key => sortState[key] !== null);
+    if (activeSort) {
+        const direction = sortState[activeSort];
+
+        filteredBooks.sort((a, b) => {
+            let valA = a[activeSort] || "";
+            let valB = b[activeSort] || "";
+
+            // Dates should sort as dates
+            if (activeSort === "dateReceived" || activeSort === "printDate") {
+                valA = new Date(valA);
+                valB = new Date(valB);
+            }
+
+            if (valA < valB) return direction === "asc" ? -1 : 1;
+            if (valA > valB) return direction === "asc" ? 1 : -1;
+            return 0;
+        });
+    }
+
+    // ⭐ RENDER EACH BOOK ⭐
+    filteredBooks.forEach((book, index) => {
+        const item = document.createElement("div");
+        item.className = "book-item";
+
+        item.innerHTML = `
+            <div class="book-card-front">
+                ${book.cover
+                    ? `<img src="${book.cover}" alt="Cover" onerror="this.style.display='none'">`
+                    : `<div class="placeholder-cover">No Cover</div>`
+                }
+
+                <h3>${book.title}</h3>
+                <p>${book.author}</p>
+                <p>${book.status}</p>
+
+                <div class="book-dates">
+                    <p><strong>Received:</strong> ${book.dateReceived ? formatDisplayDate(book.dateReceived) : "—"}</p>
+                    <p><strong>Read:</strong> ${book.dateRead ? formatDisplayDate(book.dateRead) : "—"}</p>
+                    <p><strong>Reviewed:</strong> ${book.reviewed}</p>
+                </div>
+
+                ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
+
+                <div class="back-description-container">
+                    <p class="back-description">${book.description || "No description added yet."}</p>
+                </div>
+
+                <div class="button-row">
+                    <button onclick="editBook(${index})">Edit</button>
+                    <button class="delete-btn" onclick="deleteBook(${index})">Delete</button>
+                </div>
+            </div>
+        `;
+
+        list.appendChild(item);
+    });
 }
 
 /* ========================= DELETE BOOK ========================= */
@@ -1044,217 +1109,62 @@ function deleteBook(index) {
 
     books.splice(index, 1);
     localStorage.setItem('books', JSON.stringify(books));
-
-    sortBooks('dateReceived', true);
     renderBooks();
 }
 
-/* ========================= SORT BOOKS ========================= */
-function sortBooks(type, direction = 'asc', skipRender = false) {
-    const dir = direction === 'asc' ? 1 : -1;
+/* ========================= SORT TOGGLE ========================= */
+function toggleSort(field) {
+    const current = sortState[field];
 
-    switch (type) {
+    // Cycle: asc → desc → asc
+    sortState[field] = current === "asc" ? "desc" : "asc";
 
-        case 'dateReceived':
-            books.sort((a, b) => {
-                const da = a.dateReceived ? new Date(a.dateReceived) : 0;
-                const db = b.dateReceived ? new Date(b.dateReceived) : 0;
-                return (da - db) * dir;
-            });
-            break;
-
-        case 'printDate':
-            books.sort((a, b) => {
-                const da = a.datePrinted ? new Date(a.datePrinted) : 0;
-                const db = b.datePrinted ? new Date(b.datePrinted) : 0;
-                return (da - db) * dir;
-            });
-            break;
-
-        case 'title':
-            books.sort((a, b) => a.title.localeCompare(b.title) * dir);
-            break;
-
-        case 'author':
-            books.sort((a, b) => a.author.localeCompare(b.author) * dir);
-            break;
-
-        case 'genre':
-            books.sort((a, b) => a.genre.localeCompare(b.genre) * dir);
-            break;
-
-        case 'status':
-            books.sort((a, b) => a.status.localeCompare(b.status) * dir);
-            break;
-
-        case 'source':
-            books.sort((a, b) => a.source.localeCompare(b.source) * dir);
-            break;
-    }
-
-    if (!skipRender) renderBooks();
-}
-
-/* ========================= TOGGLE SORT ========================= */
-function toggleSort(type) {
-    // Flip direction
-    sortState[type] = sortState[type] === 'asc' ? 'desc' : 'asc';
-
-    // Apply sort
-    sortBooks(type, sortState[type]);
-
-    // Update button labels
-    updateSortLabels();
-}
-
-/* ========================= UPDATE SORT LABELS ========================= */
-function updateSortLabels() {
-    const arrows = {
-        asc: "⬆️",
-        desc: "⬇️"
-    };
-
-    const buttons = document.querySelectorAll("#sortOptions button");
-
-    buttons.forEach(btn => {
-        const match = btn.getAttribute("onclick").match(/'(.+?)'/);
-        if (!match) return;
-
-        const type = match[1];
-        const base = btn.dataset.label;
-
-        btn.textContent = `${base} ${arrows[sortState[type]]}`;
-    });
-}
-
-/* ========================= RENDER FILTERED BOOKS ========================= */
-function renderFilteredBooks(filteredBooks) {
-    const library = document.getElementById('bookList');
-    library.innerHTML = "";
-
-    filteredBooks.forEach(book => {
-        const realIndex = books.indexOf(book);
-
-        const bookCard = document.createElement('div');
-        bookCard.className = "book-item";
-
-        bookCard.innerHTML = `
-<div class="book-card-front">
-
-    <img src="${book.cover}" 
-         loading="lazy" 
-         alt="Cover"
-         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-
-    <div class="placeholder-cover" style="display:none;">No Cover</div>
-
-    <h3>${book.title}</h3>
-    <p class="author">${book.author}</p>
-    <p class="status">${book.status}</p>
-
-    <div class="book-dates">
-        <p><strong>Received:</strong> ${formatDisplayDate(book.dateReceived)}</p>
-        <p><strong>Read:</strong> ${formatDisplayDate(book.dateRead)}</p>
-        <p><strong>Reviewed:</strong> ${book.reviewed === "Yes" ? "Yes" : "No"}</p>
-    </div>
-
-    ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
-
-    <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${realIndex})">Edit</button>
-        <button class="delete-btn" onclick="event.stopPropagation(); deleteBook(${realIndex})">Delete</button>
-    </div>
-
-</div>
-
-<div class="book-card-back" style="display:none;">
-    <h3>${book.title}</h3>
-    <p><strong>Genres:</strong> ${book.genre}</p>
-
-    <div class="back-description-container">
-        <p class="back-description">${book.description || "No description added yet."}</p>
-    </div>
-
-    <div class="button-row">
-        <button onclick="event.stopPropagation(); editBook(${realIndex})">Edit</button>
-        <button onclick="event.stopPropagation(); flipCard(${realIndex})">Back</button>
-    </div>
-</div>
-        `;
-
-        bookCard.onclick = () => flipCard(realIndex);
-
-        library.appendChild(bookCard);
-    });
-}
-
-/* ========================= FLIP CARD ========================= */
-function flipCard(index) {
-    const card = document.getElementById(`book-${index}`);
-    const front = card.querySelector(".book-card-front");
-    const back = card.querySelector(".book-card-back");
-
-    if (front.style.display !== "none") {
-        front.style.display = "none";
-        back.style.display = "flex";
-    } else {
-        back.style.display = "none";
-        front.style.display = "flex";
-    }
-}
-
-/* ========================= DELETE BOOK ========================= */
-function deleteBook(index) {
-    if (!confirm("Delete this book?")) return;
-
-    books.splice(index, 1);
-    localStorage.setItem('books', JSON.stringify(books));
-
-    sortBooks('dateReceived', sortState.dateReceived, true);
     renderBooks();
 }
 
 /* ========================= IMPORT CSV ========================= */
 function importCSV() {
-    const fileInput = document.getElementById('csvFile');
+    const fileInput = document.getElementById("csvFile");
     const file = fileInput.files[0];
+
     if (!file) {
         alert("Please select a CSV file first.");
         return;
     }
 
     const reader = new FileReader();
+
     reader.onload = function (e) {
         const text = e.target.result;
-        const rows = text.split("\n").map(r => r.split(","));
+        const rows = text.split("\n").map(r => r.trim()).filter(r => r);
 
         rows.forEach(row => {
-            if (row.length < 2) return;
+            const cols = row.split(",");
 
-            const book = {
-                title: row[0] || "",
-                author: row[1] || "",
-                genre: row[2] || "",
-                source: row[3] || "Amazon Purchase",
-                series: row[4] || "",
-                seriesNumber: row[5] || "",
-                datePrinted: row[6] || "",
-                dateReceived: row[7] || new Date().toISOString().split("T")[0],
-                dateRead: row[8] || "",
-                reviewed: row[9] || "No",
-                cover: row[10] || "",
-                link: row[11] || "",
-                status: row[12] || "TBR",
-                description: row[13] || "",
-                timestamp: Date.now()
-            };
+            if (cols.length >= 5) {
+                const book = {
+                    title: cols[0],
+                    author: cols[1],
+                    genre: cols[2],
+                    source: cols[3],
+                    status: cols[4],
+                    series: cols[5] || "",
+                    seriesNumber: cols[6] || "",
+                    datePrinted: cols[7] || "",
+                    dateReceived: cols[8] || "",
+                    dateRead: cols[9] || "",
+                    reviewed: cols[10] || "No",
+                    cover: cols[11] || "",
+                    link: cols[12] || "",
+                    description: cols[13] || "",
+                    timestamp: Date.now()
+                };
 
-            books.push(book);
+                books.push(book);
+            }
         });
 
-        localStorage.setItem('books', JSON.stringify(books));
-
-        sortBooks('dateReceived', sortState.dateReceived, true);
+        localStorage.setItem("books", JSON.stringify(books));
         renderBooks();
         alert("CSV import complete!");
     };
@@ -1262,24 +1172,22 @@ function importCSV() {
     reader.readAsText(file);
 }
 
-/* ========================= INIT ========================= */
+/* ========================= INITIAL LOAD ========================= */
 initializeLibraryName();
-sortBooks('dateReceived', sortState.dateReceived, true);
-updateSortLabels();
 renderBooks();
-    <!-- your script block ends here -->
+
 </script>
 
-<p style="
+<div style="
     text-align:center;
-    opacity:0.75;
-    font-size:12px;
-    margin-top:20px;
-    color:#003300;
-    text-shadow: 0 0 6px #66ff66;
+    margin-top:40px;
+    font-size:14px;
+    color:#004400;
+    opacity:0.85;
+    text-shadow:0 0 6px #ccffcc;
 ">
-    Powered by the Emerald Fire Book Vault App — v4.1 1‑17‑2026
-</p>
+    Powered by the Emerald Fire Book Vault App — v4.0 (01‑18‑2026)
+</div>
 
 </body>
 </html>
