@@ -372,7 +372,7 @@
 </div>
 
 <!-- ⭐ NEW ICON TAB BAR ⭐ -->
-<
+
     <div id="iconTabs">
 
         <div class="icon-button" onclick="showTab('libraryTab')">
@@ -680,8 +680,7 @@ function showLibraryPanel(panelId) {
     if (panelId === "searchPanel") {
         document.getElementById('searchBar').style.display = 'block';
     } else {
-        const si = document.getElementById('searchInput');
-        if (si) si.value = '';
+// Do NOT clear search input here — it breaks index mapping
     }
 
     if (panelId === "sortPanel") {
@@ -812,22 +811,23 @@ function addBook() {
     }
 
     const book = {
-        title: document.getElementById('title').value,
-        author: document.getElementById('author').value,
-        genre: document.getElementById('genre').value,
-        source: document.getElementById('source').value,
-        series: document.getElementById('series').value,
-        seriesNumber: document.getElementById('seriesNumber').value,
-        dateReceived: document.getElementById('dateReceived').value || new Date().toLocaleDateString("en-CA"),
-        dateRead: document.getElementById('dateRead').value,
-        datePrinted: document.getElementById('datePrinted').value,
-        reviewed: document.getElementById('reviewed').value,
-        cover: document.getElementById('cover').value,
-        link: document.getElementById('link').value,
-        status: document.getElementById('status').value,
-        description: document.getElementById('description').value,
-        timestamp: Date.now()
-    };
+    id: crypto.randomUUID(),   // ⭐ NEW UNIQUE ID ⭐
+    title: document.getElementById('title').value,
+    author: document.getElementById('author').value,
+    genre: document.getElementById('genre').value,
+    source: document.getElementById('source').value,
+    series: document.getElementById('series').value,
+    seriesNumber: document.getElementById('seriesNumber').value,
+    dateReceived: document.getElementById('dateReceived').value || new Date().toLocaleDateString("en-CA"),
+    dateRead: document.getElementById('dateRead').value,
+    datePrinted: document.getElementById('datePrinted').value,
+    reviewed: document.getElementById('reviewed').value,
+    cover: document.getElementById('cover').value,
+    link: document.getElementById('link').value,
+    status: document.getElementById('status').value,
+    description: document.getElementById('description').value,
+    timestamp: Date.now()
+};
 
     if (editingIndex !== null) {
         books[editingIndex] = book;
@@ -859,8 +859,6 @@ function editBook(index) {
     const book = books[index];
     editingIndex = index;
 
-    const si = document.getElementById('searchInput');
-    if (si) si.value = '';
 
     document.getElementById('title').value = book.title || '';
     document.getElementById('author').value = book.author || '';
@@ -1011,13 +1009,11 @@ function renderBooks() {
             let valA = a[activeSort];
             let valB = b[activeSort];
 
-            // Date fields
             if (activeSort === "dateReceived" || activeSort === "datePrinted" || activeSort === "dateRead") {
                 valA = valA ? new Date(valA) : new Date(0);
                 valB = valB ? new Date(valB) : new Date(0);
             }
 
-            // Strings
             if (typeof valA === "string") valA = valA.toLowerCase();
             if (typeof valB === "string") valB = valB.toLowerCase();
 
@@ -1029,7 +1025,7 @@ function renderBooks() {
 
     /* ========================= RENDER EACH BOOK ========================= */
     filtered.forEach((book) => {
-        const realIndex = books.indexOf(book);
+        const realIndex = books.findIndex(b => b.id === book.id);
 
         const item = document.createElement('div');
         item.className = 'book-item';
@@ -1070,10 +1066,23 @@ function renderBooks() {
 
         list.appendChild(item);
     });
+} 
+  /* ========================= END RENDER BOOKS ========================= */
+
+
+/* ========================= SHOW TAB FUNCTION ========================= */
+function showTab(tabId) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+
+    // Show the selected tab
+    const target = document.getElementById(tabId);
+    if (target) target.style.display = 'block';
+
+    // ⭐ Do NOT clear search input here — it breaks index mapping
 }
-
-
-
 /* ========================= DOMContentLoaded (MUST BE LAST) ========================= */
 // document.addEventListener("DOMContentLoaded", ...)
 
@@ -1111,7 +1120,7 @@ function renderBooks() {
 
     <!-- Footer Text -->
     <span>
-        Powered by the Emerald Fire Book Vault App — v4.0 (01‑20‑2026)
+        Powered by the Emerald Fire Book Vault App — v1.2226 (01‑22‑2026)
     </span>
 
 </div>
