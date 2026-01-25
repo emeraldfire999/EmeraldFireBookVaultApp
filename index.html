@@ -983,14 +983,13 @@ else {
 /* ===============================
    ⭐ EPUB IMPORT LOGIC ⭐
    =============================== */
-
 // Uses JSZip to read EPUB files
 async function importEPUBFile(file) {
     const zip = await JSZip.loadAsync(file);
+    const parser = new DOMParser();
 
     // 1. Read container.xml to find the OPF file
     const containerText = await zip.file("META-INF/container.xml").async("text");
-    const parser = new DOMParser();
     const containerXML = parser.parseFromString(containerText, "application/xml");
     const opfPath = containerXML.querySelector("rootfile").getAttribute("full-path");
 
@@ -999,43 +998,74 @@ async function importEPUBFile(file) {
     const opfXML = parser.parseFromString(opfText, "application/xml");
 
     // 3. Extract metadata
-    const title = opfXML.querySelector("metadata > title")?.textContent || file.name.replace(".epub", "");
-    const author = opfXML.querySelector("metadata > creator")?.textContent || "Unknown";
+    const title =
+        opfXML.querySelector("metadata > title")?.textContent ||
+        file.name.replace(".epub", "");
 
-    // 4. Find cover image
+    const author =
+        opfXML.querySelector("metadata > creator")?.textContent ||
+        "Unknown";
+
+    /* ===============================
+       ⭐ COVER EXTRACTION (ROBUST) ⭐
+       =============================== */
     let coverBlob = null;
-    const manifest = opfXML.querySelectorAll("manifest > item");
-
     let coverHref = null;
-    manifest.forEach(item => {
-        const id = item.getAttribute("id");
-        const href = item.getAttribute("href");
-        const props = item.getAttribute("properties");
 
-        if (props && props.includes("cover-image")) {
-            coverHref = href;
-        }
-        if (id && id.toLowerCase().includes("cover")) {
-            coverHref = href;
-        }
-    });
+    // A) <meta name="cover" content="id">
+    const metaCover = opfXML.querySelector('meta[name="cover"]');
+    if (metaCover) {
+        const coverId = metaCover.getAttribute("content");
+        const coverItem = opfXML.querySelector(`item[id="${coverId}"]`);
+        if (coverItem) coverHref = coverItem.getAttribute("href");
+    }
 
+    // B) properties="cover-image"
+    if (!coverHref) {
+        const propCover = opfXML.querySelector('item[properties~="cover-image"]');
+        if (propCover) coverHref = propCover.getAttribute("href");
+    }
+
+    // C) id contains "cover"
+    if (!coverHref) {
+        const idCover = Array.from(opfXML.querySelectorAll("item"))
+            .find(i => i.getAttribute("id")?.toLowerCase().includes("cover"));
+        if (idCover) coverHref = idCover.getAttribute("href");
+    }
+
+    // D) Handle XHTML wrapper pages
+    if (coverHref && (coverHref.endsWith(".xhtml") || coverHref.endsWith(".html"))) {
+        const basePath = opfPath.substring(0, opfPath.lastIndexOf("/") + 1);
+        const wrapperText = await zip.file(basePath + coverHref).async("text");
+        const wrapperXML = parser.parseFromString(wrapperText, "application/xhtml+xml");
+
+        const img = wrapperXML.querySelector("img");
+        if (img) coverHref = img.getAttribute("src");
+    }
+
+    // E) Load the actual image
     if (coverHref) {
         const basePath = opfPath.substring(0, opfPath.lastIndexOf("/") + 1);
         const coverFile = zip.file(basePath + coverHref);
-        if (coverFile) {
-            coverBlob = await coverFile.async("blob");
-        }
+        if (coverFile) coverBlob = await coverFile.async("blob");
     }
 
-    // 5. Build book object
+    /* ===============================
+       ⭐ BUILD BOOK OBJECT ⭐
+       =============================== */
+    const today = new Date().toISOString().split("T")[0];
+    const fallbackCover = "https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/repair-manual.png";
+
     const newBook = {
         id: Date.now() + Math.random(),
         title: title,
         author: author,
         format: "EPUB",
-        source: "Local File",
-        cover: coverBlob ? URL.createObjectURL(coverBlob) : null
+        status: "TBR",
+        dateReceived: today,
+        source: "BookFunnel",
+        cover: coverBlob ? URL.createObjectURL(coverBlob) : fallbackCover,
+        coverStatus: coverBlob ? "OK" : "Missing"
     };
 
     // 6. Add to library
@@ -1043,28 +1073,6 @@ async function importEPUBFile(file) {
     saveBooks();
     renderBooks();
 }
-
-/* ===============================
-   ⭐ PROCESS SELECTED FILES (EPUB) ⭐
-   =============================== */
-async function processSelectedFiles() {
-    if (selectedFiles.length === 0) {
-        alert("No files selected.");
-        return;
-    }
-
-    for (const file of selectedFiles) {
-        if (file.name.toLowerCase().endsWith(".epub")) {
-            await importEPUBFile(file);
-        } else {
-            console.log("Skipping non-EPUB file:", file.name);
-        }
-    }
-
-    selectedFiles = [];
-    hideAllImportPanels();
-}
-
 
 /* ========================= SCROLL TO TOP ========================= */
 function scrollToTop() {
@@ -1538,7 +1546,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     <!-- Footer Text -->
     <span>
-        Powered by the Emerald Fire Book Vault App — v01.24-26
+        Powered by the Emerald Fire Book Vault App — v01.22.26
     </span>
 
 </div>
