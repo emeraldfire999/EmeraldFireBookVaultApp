@@ -329,14 +329,17 @@
 
         /* ⭐ SIMPLE CARD SYSTEM ⭐ */
         .book-item {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    /* ⭐ REQUIRED FIX ⭐ */
+    height: 100%;
+}
 .book-front,
 .book-back {
     display: none;
@@ -345,6 +348,12 @@
 .book-front.active,
 .book-back.active {
     display: block;
+}
+
+.card-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 /* ⭐ PREVENT CARDS FROM COLLAPSING ⭐ */
@@ -364,7 +373,7 @@
         .book-buttons {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             margin-top: 10px;
         }
 
@@ -372,10 +381,10 @@
             background: #4CAF50;
             color: white;
             border: none;
-            padding: 6px 10px;
+            padding: 4px 4px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .delete-btn {
@@ -394,65 +403,86 @@
             text-decoration: underline;
         }
 
+/* ⭐ INPUT FORM ⭐ */
+.form-section {
+    background: rgba(255,255,255,0.95);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
-        /* ⭐ INPUT FORM ⭐ */
-        .form-section {
-            background: rgba(255,255,255,0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 600px;
-        }
+/* Labels */
+label {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
 
-        label {
-            display: block;
-            margin-top: 12px;
-            font-weight: bold;
-        }
+/* Inputs */
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #cfcfcf;
+    font-size: 15px;
+    box-sizing: border-box;
+}
 
-        input, select, textarea {
-            width: 100%;
-            padding: 8px;
-            margin-top: 4px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
+/* Description box */
+textarea {
+    min-height: 140px;
+    resize: vertical;
+}
 
-        textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
+/* ⭐ ROW SYSTEM ⭐ */
+.row {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
 
-        .row {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
+.third { flex: 1; }
+.half { flex: 1; }
+.wide { flex: 2; }
+.small {
+    width: 90px;
+    flex-shrink: 0;
+}
 
-        .third { flex: 1; }
-        .half { flex: 1; }
-        .wide { flex: 2; }
-        .small { width: 80px; }
+/* ⭐ EDIT LAYOUT ⭐ */
+.edit-layout {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    margin-top: 20px;
+}
 
-        /* ⭐ EDIT LAYOUT ⭐ */
-        .edit-layout {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-        }
+/* ⭐ PREVIEW CARD ⭐ */
+.preview-card {
+    width: 260px;
+    background: rgba(255,255,255,0.98);
+    padding: 14px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    display: none;
+}
 
-        .preview-card {
-            width: 250px;
-            background: rgba(255,255,255,0.95);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: none;
-        }
+/* ⭐ BUTTONS ⭐ */
+.book-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 6px;
+    margin-top: 8px;
+}
 
-
+.book-buttons button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+}
 
 /* ⭐ FLOATING RETURN-TO-TOP BUTTON — ICON ONLY ⭐ */
 #scrollTopBtn {
@@ -512,7 +542,7 @@
     color: #eaffea;
 }
 
-</Style>
+</style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
@@ -578,116 +608,110 @@
 </div>
 
 
-    <!-- ⭐ INPUT TAB ⭐ -->
-    <div id="inputTab" class="tab-content" style="display:none;">
+<!-- ⭐ INPUT TAB ⭐ -->
+<div id="inputTab" class="tab-content" style="display:none;">
 
-        <div class="edit-layout">
+    <div class="edit-layout">
 
-            <!-- ⭐ LEFT: INPUT FORM ⭐ -->
-            <div class="form-section">
+        <!-- ⭐ LEFT: INPUT FORM ⭐ -->
+        <div class="form-section">
 
-                <label for="title">Title</label>
-                <input id="title">
+            <label for="title">Title</label>
+            <input id="title">
 
-                <label for="author">Author</label>
-                <input id="author">
+            <label for="author">Author</label>
+            <input id="author">
 
-                <label for="genre">Genre</label>
-                <input id="genre">
+            <label for="genre">Genre</label>
+            <input id="genre">
 
-                <div class="row">
-                    <div class="third">
-                        <label for="source">Source</label>
-                        <select id="source">
-                            <option>Amazon Purchase</option>
-                            <option>Kindle Unlimited</option>
-                            <option>BookFunnel</option>
-                            <option>StoryOrigin</option>
-                            <option>ARC</option>
-                            <option>Newsletter Freebie</option>
-                            <option>Personal Document</option>
-                        </select>
-                    </div>
+            <label for="sourceSelect">Source</label>
+            <select id="sourceSelect" onchange="handleSourceChange()"></select>
 
-                    <div class="third">
-                        <label for="status">Status</label>
-                        <select id="status">
-                            <option>TBR</option>
-                            <option>Currently Reading</option>
-                            <option>Finished</option>
-                            <option>DNF</option>
-                            <option>On Hold</option>
-                            <option>Re-Reading</option>
-                        </select>
-                    </div>
+            <input id="customSourceInput"
+                   placeholder="Enter custom source…"
+                   style="display:none; margin-top:5px;">
 
-                    <div class="third">
-                        <label for="reviewed">Reviewed</label>
-                        <select id="reviewed">
-                            <option>No</option>
-                            <option>Yes</option>
-                        </select>
-                    </div>
+            <div class="row">
+                <div class="third">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option>TBR</option>
+                        <option>Currently Reading</option>
+                        <option>Finished</option>
+                        <option>DNF</option>
+                        <option>On Hold</option>
+                        <option>Re-Reading</option>
+                    </select>
                 </div>
 
-                <div class="row">
-                    <div class="wide">
-                        <label for="series">Series Name</label>
-                        <input id="series">
-                    </div>
+                <div class="third">
+                    <label for="reviewed">Reviewed</label>
+                    <select id="reviewed">
+                        <option>No</option>
+                        <option>Yes</option>
+                    </select>
+                </div>
+            </div>
 
-                    <div class="small">
-                        <label for="seriesNumber">#</label>
-                        <input id="seriesNumber" type="number">
-                    </div>
+            <div class="row">
+                <div class="wide">
+                    <label for="series">Series Name</label>
+                    <input id="series">
                 </div>
 
-                <!-- ⭐ FIXED DATE ROW ⭐ -->
-                <div class="row">
-                    <div class="third">
-                        <label for="datePrinted">Date Printed</label>
-                        <input id="datePrinted" type="date">
-                    </div>
+                <div class="small">
+                    <label for="seriesNumber">#</label>
+                    <input id="seriesNumber" type="number">
+                </div>
+            </div>
 
-                    <div class="third">
-                        <label for="dateReceived">Date Received</label>
-                        <input id="dateReceived" type="date">
-                    </div>
-
-                    <div class="third">
-                        <label for="dateRead">Date Read</label>
-                        <input id="dateRead" type="date">
-                    </div>
+            <div class="row">
+                <div class="third">
+                    <label for="datePrinted">Date Printed</label>
+                    <input id="datePrinted" type="date">
                 </div>
 
-                <div class="row">
-                    <div class="half">
-                        <label for="cover">Cover Image URL</label>
-                        <input id="cover">
-                    </div>
-
-                    <div class="half">
-                        <label for="link">Book Link</label>
-                        <input id="link">
-                    </div>
+                <div class="third">
+                    <label for="dateReceived">Date Received</label>
+                    <input id="dateReceived" type="date">
                 </div>
 
-                <label for="description">Description / Review / Notes</label>
-                <textarea id="description"></textarea>
+                <div class="third">
+                    <label for="dateRead">Date Read</label>
+                    <input id="dateRead" type="date">
+                </div>
+            </div>
 
-                <div class="book-buttons">
-                    <button onclick="addBook()">Save</button>
-                    <button onclick="cancelInput()">Cancel</button>
+            <div class="row">
+                <div class="half">
+                    <label for="cover">Cover Image URL</label>
+                    <input id="cover">
                 </div>
 
-            </div> <!-- end .form-section -->
+                <div class="half">
+                    <label for="link">Book Link</label>
+                    <input id="link">
+                </div>
+            </div>
 
-            <!-- ⭐ RIGHT: PREVIEW ⭐ -->
-            <div id="editPreview" class="preview-card"></div>
+            <label for="description">Description / Review / Notes</label>
+            <textarea id="description"></textarea>
 
-        </div> <!-- end .edit-layout -->
+            <div class="book-buttons">
+                <button onclick="addBook()">Save</button>
+                <button onclick="cancelInput()">Cancel</button>
+            </div>
 
-    </div> <!-- end #inputTab -->
+        </div> <!-- ⭐ THIS is the correct end of .form-section -->
+
+        <!-- ⭐ RIGHT: PREVIEW ⭐ -->
+        <div id="editPreview" class="preview-card"></div>
+
+    </div> <!-- end .edit-layout -->
+
+</div> <!-- end #inputTab -->
+
 
 <!-- ⭐ LIBRARY TAB ⭐ -->
 <div id="libraryTab" class="tab-content" style="display:block;">
@@ -770,7 +794,12 @@
         <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/acciptellus.png" alt="Amazon Import">
         <span class="icon-tooltip">Receive Acciptellus — the winged courier of Amazonian lore</span>
     </div>
-
+<button class="importSubButton" data-target="jsonImportPanel">JSON</button>
+<div id="jsonImportPanel" class="importPanel" style="display:none;">
+    <h3>Import JSON Backup</h3>
+    <input type="file" id="jsonFileInput" accept=".json">
+    <button onclick="importJSON()">Import JSON</button>
+</div>
 </div>
 
 
@@ -829,7 +858,62 @@
 let books = JSON.parse(localStorage.getItem('books')) || [];
 let editingIndex = null;
 let importWasOpened = false; // ⭐ Tracks if Import was explicitly opened
+// ⭐ Learning Source System ⭐
 
+// Default sources (the ones in your HTML)
+const defaultSources = [
+    "Amazon Purchase",
+    "Kindle Unlimited",
+    "BookFunnel",
+    "StoryOrigin",
+    "ARC",
+    "Newsletter Freebie",
+    "Personal Document"
+];
+
+// Load saved custom sources
+function loadSavedSources() {
+    const saved = JSON.parse(localStorage.getItem("customSources") || "[]");
+    return saved;
+}
+
+// Save a new custom source
+function saveCustomSource(source) {
+    const saved = loadSavedSources();
+
+    // Normalize capitalization
+    const normalized = source.trim();
+
+    if (!saved.includes(normalized) && !defaultSources.includes(normalized)) {
+        saved.push(normalized);
+        localStorage.setItem("customSources", JSON.stringify(saved));
+    }
+}
+
+// Populate the dropdown with defaults + saved
+function populateSourceDropdown() {
+    const select = document.getElementById("sourceSelect");
+    const saved = loadSavedSources();
+
+    // Clear existing options
+    select.innerHTML = "";
+
+    const allSources = [...defaultSources, ...saved];
+
+  // Add all known sources
+allSources.forEach(src => {
+    const opt = document.createElement("option");
+    opt.textContent = src;
+    opt.value = src;
+    select.appendChild(opt);
+});
+
+// Add the “Other…” option
+const customOpt = document.createElement("option");
+customOpt.textContent = "Other…";
+customOpt.value = "__custom__";
+select.appendChild(customOpt);
+}
 
 /* ========================= INITIALIZATION FUNCTIONS ========================= */
 // saveLibraryName()
@@ -860,15 +944,12 @@ function initializeLibraryName() {
     const savedName = localStorage.getItem('libraryName');
 
     if (savedName) {
-        // Hide welcome screen
         const welcome = document.getElementById('welcomeScreen');
         welcome.style.display = "none";
 
-        // Show library tab
         const library = document.getElementById('libraryTab');
         library.style.display = "block";
 
-        // Hide Import Sub-Bar and all Import Panels on load
         const importBar = document.getElementById('importSubBar');
         if (importBar) importBar.style.display = "none";
 
@@ -876,22 +957,35 @@ function initializeLibraryName() {
             panel.style.display = "none";
         });
 
-        // Force a tiny scroll to activate scroll dragon
         window.scrollTo(0, 1);
 
-        // Set header text
         const header = document.getElementById('libraryTitle');
         if (header) header.textContent = savedName;
-    } else {
-        // Show welcome screen
-        document.getElementById('welcomeScreen').style.display = "flex";
 
-        // Hide library tab
+        // ⭐ Populate Source dropdown on load
+        populateSourceDropdown();
+
+    } else {
+        document.getElementById('welcomeScreen').style.display = "flex";
         document.getElementById('libraryTab').style.display = "none";
+
+// ⭐ Also populate dropdown for first‑time users
+populateSourceDropdown();
     }
 }
 
-/* ========================= SAVE BOOKS ========================= */
+/* ========================= SOURCE: HANDLE CUSTOM OPTION ========================= */
+function handleSourceChange() {
+    const select = document.getElementById("source");
+    const customInput = document.getElementById("customSourceInput");
+
+    if (select.value === "__custom__") {
+        customInput.style.display = "block";
+        customInput.focus();
+    } else {
+        customInput.style.display = "none";
+    }
+}
 function saveBooks() {
     localStorage.setItem('books', JSON.stringify(books));
 }
@@ -1083,39 +1177,38 @@ function scrollToTop() {
 // addBook()
 /* ========================= ADD BOOK ========================= */
 function addBook() {
-    const newTitle = document.getElementById('title').value.trim().toLowerCase();
-    const newAuthor = document.getElementById('author').value.trim().toLowerCase();
 
-    if (editingIndex === null) {
-        const duplicate = books.some(b =>
-            (b.title || "").trim().toLowerCase() === newTitle &&
-            (b.author || "").trim().toLowerCase() === newAuthor
-        );
+    // ⭐ Determine the correct source value
+    const sourceSelect = document.getElementById("sourceSelect");
+    const customInput = document.getElementById("customSourceInput");
 
-        if (duplicate) {
-            alert("This book already exists in your library.\n\nYou can fix the entry or press Cancel.");
-            return;
-        }
-    }
+    const sourceValue =
+        sourceSelect.value === "__custom__"
+            ? customInput.value.trim()
+            : sourceSelect.value;
 
+    // ⭐ Build the book object
     const book = {
-    id: crypto.randomUUID(),   // ⭐ NEW UNIQUE ID ⭐
-    title: document.getElementById('title').value,
-    author: document.getElementById('author').value,
-    genre: document.getElementById('genre').value,
-    source: document.getElementById('source').value,
-    series: document.getElementById('series').value,
-    seriesNumber: document.getElementById('seriesNumber').value,
-    dateReceived: document.getElementById('dateReceived').value || new Date().toLocaleDateString("en-CA"),
-    dateRead: document.getElementById('dateRead').value,
-    datePrinted: document.getElementById('datePrinted').value,
-    reviewed: document.getElementById('reviewed').value,
-    cover: document.getElementById('cover').value,
-    link: document.getElementById('link').value,
-    status: document.getElementById('status').value,
-    description: document.getElementById('description').value,
-    timestamp: Date.now()
-};
+        id: crypto.randomUUID(),
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        genre: document.getElementById('genre').value,
+        source: sourceValue,
+        series: document.getElementById('series').value,
+        seriesNumber: document.getElementById('seriesNumber').value,
+        dateReceived: document.getElementById('dateReceived').value || new Date().toLocaleDateString("en-CA"),
+        dateRead: document.getElementById('dateRead').value,
+        datePrinted: document.getElementById('datePrinted').value,
+        reviewed: document.getElementById('reviewed').value,
+        cover: document.getElementById('cover').value,
+        link: document.getElementById('link').value,
+        status: document.getElementById('status').value,
+        description: document.getElementById('description').value,
+        timestamp: Date.now()
+    };
+
+    // ⭐ Teach the system this source
+    saveCustomSource(sourceValue);
 
     if (editingIndex !== null) {
         books[editingIndex] = book;
@@ -1147,11 +1240,26 @@ function editBook(index) {
     const book = books[index];
     editingIndex = index;
 
-
     document.getElementById('title').value = book.title || '';
     document.getElementById('author').value = book.author || '';
     document.getElementById('genre').value = book.genre || '';
-    document.getElementById('source').value = book.source || '';
+
+    // ⭐ SOURCE FIELD (handles default + custom)
+    const sourceSelect = document.getElementById('sourceSelect');
+    const customInput = document.getElementById('customSourceInput');
+
+    // If the dropdown contains this source, select it normally
+    if (sourceSelect.querySelector(`option[value="${book.source}"]`)) {
+        sourceSelect.value = book.source;
+        customInput.style.display = "none";
+        customInput.value = "";
+    } else {
+        // Otherwise treat it as a custom source
+        sourceSelect.value = "__custom__";
+        customInput.style.display = "block";
+        customInput.value = book.source || "";
+    }
+
     document.getElementById('series').value = book.series || '';
     document.getElementById('seriesNumber').value = book.seriesNumber || '';
     document.getElementById('dateReceived').value = book.dateReceived || '';
@@ -1170,13 +1278,21 @@ function editBook(index) {
     updatePreviewFromForm();
 }
 
-// clearForm()
+
 /* ========================= CLEAR FORM ========================= */
 function clearForm() {
     document.getElementById('title').value = '';
     document.getElementById('author').value = '';
     document.getElementById('genre').value = '';
-    document.getElementById('source').value = 'Amazon Purchase';
+
+    // ⭐ Reset source dropdown
+    const sourceSelect = document.getElementById('sourceSelect');
+    const customInput = document.getElementById('customSourceInput');
+
+    sourceSelect.value = 'Amazon Purchase';
+    customInput.style.display = "none";
+    customInput.value = "";
+
     document.getElementById('series').value = '';
     document.getElementById('seriesNumber').value = '';
     document.getElementById('datePrinted').value = '';
@@ -1193,7 +1309,6 @@ function clearForm() {
     const preview = document.getElementById("editPreview");
     if (preview) preview.style.display = "none";
 }
-
 // toggleCard()
 /* ========================= SIMPLE CARD TOGGLE ========================= */
 function toggleCard(index) {
@@ -1318,8 +1433,14 @@ function renderBooks() {
 
     list.innerHTML = "";
 
-    let filtered = [...books];
+   let filtered = [...books];
 
+/* ⭐ DEFAULT SORT: newest received first ⭐ */
+filtered.sort((a, b) => {
+    const da = a.dateReceived ? new Date(a.dateReceived) : new Date(0);
+    const db = b.dateReceived ? new Date(b.dateReceived) : new Date(0);
+    return db - da; // newest → oldest
+});
     /* ========================= SEARCH FILTER ========================= */
     const searchInput = document.getElementById('searchInput');
     const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
@@ -1355,7 +1476,7 @@ function renderBooks() {
         });
     }
 
-    /* ========================= RENDER EACH BOOK ========================= */
+   /* ========================= RENDER EACH BOOK ========================= */
 filtered.forEach((book) => {
     const realIndex = books.findIndex(b => b.id === book.id);
 
@@ -1363,46 +1484,46 @@ filtered.forEach((book) => {
     item.className = 'book-item';
 
     item.innerHTML = `
-        <div class="book-front active" id="front-${realIndex}">
-            ${book.cover && book.cover.startsWith('http')
-                ? `<img src="${book.cover}" loading="lazy" class="book-cover" alt="Cover" onerror="this.style.display='none'">`
-                : `<div class="book-cover">No Cover</div>`
-            }
+        <div class="card-inner">
 
-            <h3>${book.title || ""}</h3>
-            <p>${book.author || ""}</p>
-            <p><strong>Status:</strong> ${book.status || ""}</p>
+            <div class="book-front active" id="front-${realIndex}">
+                ${book.cover && book.cover.startsWith('http')
+                    ? `<img src="${book.cover}" loading="lazy" class="book-cover" alt="Cover" onerror="this.style.display='none'">`
+                    : `<div class="book-cover">No Cover</div>`
+                }
 
-            <p><strong>Received:</strong> ${book.dateReceived ? formatDisplayDate(book.dateReceived) : "—"}</p>
-            <p><strong>Read:</strong> ${book.dateRead ? formatDisplayDate(book.dateRead) : "—"}</p>
-            <p><strong>Reviewed:</strong> ${book.reviewed || ""}</p>
+                <h3>${book.title || ""}</h3>
+                <p>${book.author || ""}</p>
+                <p><strong>Status:</strong> ${book.status || ""}</p>
 
-            ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
+                <p><strong>Received:</strong> ${book.dateReceived ? formatDisplayDate(book.dateReceived) : "—"}</p>
+                <p><strong>Read:</strong> ${book.dateRead ? formatDisplayDate(book.dateRead) : "—"}</p>
+                <p><strong>Reviewed:</strong> ${book.reviewed || ""}</p>
 
-            <div class="book-buttons">
-                <button onclick="editBook(${realIndex})">Edit</button>
-                <button class="delete-btn" onclick="deleteBook(${realIndex})">Delete</button>
-                <button onclick="toggleCard(${realIndex})">More</button>
+                ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
+
+                <div class="book-buttons">
+                    <button onclick="editBook(${realIndex})">Edit</button>
+                    <button class="delete-btn" onclick="deleteBook(${realIndex})">Delete</button>
+                    <button onclick="toggleCard(${realIndex})">More</button>
+                </div>
             </div>
-        </div>
 
-        <div class="book-back" id="back-${realIndex}">
-            <p>${book.description || "No description added."}</p>
+            <div class="book-back" id="back-${realIndex}">
+                <p>${book.description || "No description added."}</p>
 
-            <div class="book-buttons">
-                <button onclick="editBook(${realIndex})">Edit</button>
-                <button onclick="toggleCard(${realIndex})">Back</button>
+                <div class="book-buttons">
+                    <button onclick="editBook(${realIndex})">Edit</button>
+                    <button onclick="toggleCard(${realIndex})">Back</button>
+                </div>
             </div>
+
         </div>
     `;
 
     list.appendChild(item);
 });
-}   
-/* ========================= END RENDER BOOKS ========================= */
-    
-
-// ⭐ THIS closes renderBooks() properly
+}
 /* ========================= END RENDER BOOKS ========================= */
 
 
