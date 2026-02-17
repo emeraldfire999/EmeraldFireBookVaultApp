@@ -437,92 +437,139 @@
             font-size: 14px;
         }
 
-        /* ========================= ⭐ STATIONARY RETURN-TO-TOP BUTTON — PHOENIX ⭐ ========================= */
-        #scrollTopBtn {
-            position: static;
-            margin: 40px auto;
-            width: 100px;
-            height: 100px;
-            cursor: pointer;
-            display: block;
-            padding: 0;
-            background: none;
-            border: none;
-            box-shadow: none;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease, transform 0.25s ease;
-        }
+ /* ========================= ⭐ STATIONARY RETURN-TO-TOP BUTTON — PHOENIX ⭐ ========================= */
+#scrollTopBtn {
+    position: static;
+    margin: 40px auto;
+    width: 90px;
+    height: 100px;
+    cursor: pointer;
+    display: block;
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+    opacity: 0;              /* stays hidden until scroll */
+    pointer-events: none;    /* disabled until visible */
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
 
-        #scrollTopBtn img {
-            width: 100px;
-            height: 100px;
-            filter:
-                drop-shadow(0 0 6px rgba(0, 255, 100, 0.7))
-                drop-shadow(0 0 12px rgba(0, 255, 100, 0.5));
-            transition: filter 0.25s ease;
-        }
-
-        #scrollTopBtn:hover {
-            transform: translateY(-3px);
-        }
-
-        #scrollTopBtn:hover img {
-            filter:
-                drop-shadow(0 0 10px rgba(0, 255, 100, 0.9))
-                drop-shadow(0 0 18px rgba(0, 255, 100, 0.7));
-        }
-
-        #scrollTopBtn.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
- 
-  /* ========================= ⭐ STATIONARY Back-up BUTTON — PHOENIX ⭐ ========================= */
-		#backupBtn {
-		position: static;
-		margin: 20px auto;
-		width: 100px;
-		height: 100px;
-		cursor: pointer;
-		display: block;
-		padding: 0;
-		background: none;
-		border: none;
-		opacity: 0.9;
-		transition: opacity 0.25s ease, transform 0.25s ease;
-		}
-
-		#backupBtn img {
-		width: 100%;
-		height: 100%;
-		object-fit: contain;
-		filter:
+#scrollTopBtn img {
+    width: 90px;
+    height: 100px;
+    filter:
         drop-shadow(0 0 6px rgba(0, 255, 100, 0.7))
         drop-shadow(0 0 12px rgba(0, 255, 100, 0.5));
-		}
+    transition: filter 0.25s ease;
+}
 
-		#backupBtn:hover {
-		opacity: 1;
-		transform: translateY(-3px);
-		}
+#scrollTopBtn:hover {
+    transform: translateY(-3px);
+}
 
-		#backupBtn:hover img {
-		filter:
+#scrollTopBtn:hover img {
+    filter:
         drop-shadow(0 0 10px rgba(0, 255, 100, 0.9))
         drop-shadow(0 0 18px rgba(0, 255, 100, 0.7));
-		}
-	/* ⭐ Footer icon row — Phoenix + Dragon side by side ⭐ */
-		#footerIcons {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 10px;        /* space between the two icons */
-		margin-top: 40px; /* space above the row */
-		}
+}
 
-        /* ========================= ⭐ LIBRARY PANEL (SEARCH PANEL STYLING) ⭐ ========================= */
-        .library-panel {
+#scrollTopBtn.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ========================= ⭐ STATIONARY Back-up BUTTON — PHOENIX ⭐ ========================= */
+#backupBtn {
+    position: static;
+    margin: 20px auto;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    display: block;
+    padding: 0;
+    background: none;
+    border: none;
+    opacity: 0.9;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#backupBtn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter:
+        drop-shadow(0 0 6px rgba(0, 255, 100, 0.7))
+        drop-shadow(0 0 12px rgba(0, 255, 100, 0.5));
+}
+
+#backupBtn:hover {
+    opacity: 1;
+    transform: translateY(-3px);
+}
+
+#backupBtn:hover img {
+    filter:
+        drop-shadow(0 0 10px rgba(0, 255, 100, 0.9))
+        drop-shadow(0 0 18px rgba(0, 255, 100, 0.7));
+}
+
+/* ⭐ Footer icon row — Phoenix + Dragon side by side ⭐ */
+#footerIcons {
+    display: flex !important;          /* force visibility */
+    visibility: visible !important;    /* prevent collapse */
+    justify-content: center;
+    align-items: center;
+    gap: 10px;                         /* space between icons */
+    margin-top: 40px;                  /* space above row */
+}
+
+/* ⭐ Override button layout when inside the footer row ⭐ */
+#footerIcons button {
+    display: inline-flex;              /* stable inline layout */
+    margin: 0;
+    position: static;
+    opacity: 1 !important;             /* ensure always visible */
+    pointer-events: auto !important;   /* ensure clickable */
+}    
+
+/* ========================= ⭐ STATIONARY Reset BUTTON — AQUARIUS ⭐ ========================= */
+#resetBtn {
+    position: static;
+    margin: 20px auto;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    display: block;
+    padding: 0;
+    background: none;
+    border: none;
+    opacity: 0.9;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#resetBtn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter:
+        drop-shadow(0 0 6px rgba(0, 255, 100, 0.7))
+        drop-shadow(0 0 12px rgba(0, 255, 100, 0.5));
+}
+
+#resetBtn:hover {
+    opacity: 1;
+    transform: translateY(-3px);
+}
+
+#resetBtn:hover img {
+    filter:
+        drop-shadow(0 0 10px rgba(0, 255, 100, 0.9))
+        drop-shadow(0 0 18px rgba(0, 255, 100, 0.7));
+}
+
+ /* ========================= ⭐ LIBRARY PANEL (SEARCH PANEL STYLING) ⭐ ========================= */
+ 
+		.library-panel {
             background: rgba(0, 0, 0, 0.35);
             border: 1px solid rgba(120, 255, 120, 0.35);
             border-radius: 10px;
@@ -768,7 +815,7 @@
 
             <div class="icon-button"
                  onclick="event.stopPropagation(); toggleImportBar(); showImportPanel('importJSON')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/scroll.png" alt="JSON Import">
+                <img src="https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/json-importat.png?raw=true" alt="JSON Import">
                 <span class="icon-tooltip">Unseal Volumen Memoriae — the arcane JSON archive</span>
             </div>
         </div>
@@ -813,21 +860,11 @@
             <button onclick="importJSONBackup()">Import JSON</button>
         </div>
 
-        <!-- ========================= ⭐ LIBRARY LIST CONTAINER ⭐ ========================= -->
-        <div id="libraryList"></div>
+           <div id="libraryList"></div>
 
-        <!-- Stationary Scroll-to-Top Phoenix -->
-        <div id="footerIcons">
-		<button id="scrollTopBtn" onclick="scrollToTop()">
-        <img src="https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/scroll.png?raw=true" alt="Scroll to top">
-		</button>
-
-		<button id="backupBtn" onclick="exportLibraryJSON()">
-        <img src="https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/conservat.png?raw=true" alt="DRACO CONSERVAT">
-		</button>
-		</div>
-    </div>
+                           
 	<script>
+	
 /* ========================= ⭐ GLOBAL STATE ⭐ ========================= */
 
 let library = JSON.parse(localStorage.getItem('library')) || [];
@@ -1044,20 +1081,6 @@ function handleFileSelection(event) {
     selectedFiles = Array.from(event.target.files);
 }
 
-/* ========================= ⭐ SCROLL-TO-TOP PHOENIX ⭐ ========================= */
-
-function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-window.addEventListener("scroll", () => {
-    const btn = document.getElementById("scrollTopBtn");
-    if (window.scrollY > 300) {
-        btn.classList.add("visible");
-    } else {
-        btn.classList.remove("visible");
-    }
-});
 
 /* ========================= ⭐ SORT STATE ⭐ ========================= */
 
@@ -1646,7 +1669,7 @@ function renderLibrary() {
                 <p>${book.author || ""}</p>
                 <p><strong>Status:</strong> ${book.status || ""}</p>
                 <p><strong>Series:</strong> ${book.series || ""}</p>
-
+                <p><strong>Reviewed:</strong> ${book.reviewed || ""}</p>
                 ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
 
                 <div class="book-buttons">
@@ -1658,9 +1681,9 @@ function renderLibrary() {
 
             <!-- ========================= ⭐ BACK OF CARD ⭐ ========================= -->
             <div class="book-back" id="back-${realIndex}">
-                <p><strong>Reviewed:</strong> ${book.reviewed || ""}</p>
-                <p><strong>Received:</strong> ${book.dateReceived ? formatDisplayDate(book.dateReceived) : "—"}</p>
-                <p><strong>Read:</strong> ${book.dateRead ? formatDisplayDate(book.dateRead) : "—"}</p>
+				<p><strong>Printed:</strong> ${book.datePrinted ? formatDisplayDate(book.datePrinted) : "—"}</p>
+				<p><strong>Received:</strong> ${book.dateReceived ? formatDisplayDate(book.dateReceived) : "—"}</p>
+				<p><strong>Read:</strong> ${book.dateRead ? formatDisplayDate(book.dateRead) : "—"}</p>
 
                 <!-- ⭐ DESCRIPTION: scrollable ⭐ -->
                 <div style="
@@ -1684,69 +1707,53 @@ function renderLibrary() {
         list.appendChild(item);
     });
 }
-</script>
-<script>
 
-/* ========================= ⭐ Back up LIBRARY ⭐ ========================= */
-
-function exportLibraryJSON() {
-    const data = JSON.stringify(library, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "EmeraldFireLibraryBackup.json";
-    a.click();
-
-    URL.revokeObjectURL(url);
-}
-
-/* ========================= ⭐ RESET LIBRARY NAME ⭐ ========================= */
-
-function resetLibraryName() {
-    if (!confirm("Reset your library name? This will restart the welcome screen.")) return;
-
-    localStorage.removeItem('libraryName');
-    location.reload();
-}
 </script>
 
-<!-- ========================= ⭐ FOOTER WITH RESET BUTTON ⭐ ========================= -->
+<!-- ========================= ⭐ FOOTER WITH TWO ROWS ⭐ ========================= -->
 
+<!-- ⭐ Row 1: Phoenix + Dragon + Aquarius ⭐ -->
+<div id="footerIcons" style="
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:60px;
+    margin-top:40px;
+">
+
+    <!-- Scroll-to-top Phoenix -->
+    <button id="scrollTopBtn" style="background:none; border:none; padding:0;">
+        <img src="https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/scroll.png?raw=true"
+             alt="Scroll to Top"
+             style="width:100px; height:100px;">
+    </button>
+
+    <!-- Backup Dragon -->
+    <button id="backupBtn" onclick="exportLibraryJSON()" style="background:none; border:none; padding:0;">
+        <img src="https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/conservat.png?raw=true"
+             alt="Backup Library"
+             style="width:120px; height:120px;">
+    </button>
+
+ <!-- Aquarius (Reset) -->
+<button id="resetBtn" onclick="resetLibraryName()" style="background:none; border:none; padding:0;">
+    <img src="https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/resetart1.png?raw=true"
+         alt="Reset"
+         style="width:120px; height:120px;">
+</button>
+
+</div>
+
+<!-- ⭐ Row 2: Footer Text ⭐ -->
 <div style="
     text-align:center;
-    margin-top:40px;
+    margin-top:30px;
     font-size:14px;
     color:#004400;
     opacity:0.85;
     text-shadow:0 0 6px #ccffcc;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:12px;
 ">
-
-    <!-- Reset Button -->
-    <div onclick="resetLibraryName()" style="
-        width:40px;
-        height:40px;
-        cursor:pointer;
-        opacity:0.7;
-        transition:opacity 0.2s ease;
-    "
-    onmouseover="this.style.opacity='1'"
-    onmouseout="this.style.opacity='0.7'">
-        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/library.png"
-             alt="Reset"
-             style="width:100%; height:100%; object-fit:contain;">
-    </div>
-
-    <!-- Footer Text -->
-    <span>
-        Powered by the Emerald Fire Book Vault App — v02.16.26
-    </span>
-
+    Powered by the Emerald Fire Book Vault App — v02.17.26
 </div>
 
 </body>
