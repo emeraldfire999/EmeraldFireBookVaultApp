@@ -1084,12 +1084,14 @@ h1 {
              style="width:120px; height:120px;">
     </button>
 
-    <!-- Rename Library (Display Name Only) -->
-    <button id="resetBtn" onclick="resetLibraryName()" style="background:none; border:none; padding:0;">
-        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/resetart1.png"
-             alt="Reset Library Name"
-             style="width:120px; height:120px;">
-    </button>
+<!-- Contact Me -->
+<a href="mailto:emeraldfire999@yahoo.com" 
+   id="contactBtn"
+   style="background:none; border:none; padding:0; display:inline-block;">
+    <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/resetart1.png"
+         alt="Contact Me"
+         style="width:120px; height:120px;">
+</a>
  <!-- ⭐ VERSION TEXT (visible on welcome screen) ⭐ -->
 <div id="poweredBy" style="
     text-align:center;
@@ -1099,7 +1101,7 @@ h1 {
     opacity:0.85;
     text-shadow:0 0 6px #ccffcc;
 ">
-    Powered by the Emerald Fire Book Vault App — v03.17.26
+    Powered by the Emerald Fire Book Vault App — v03.20.26
 </div>
 </div>
 </body>
@@ -2624,16 +2626,9 @@ function exportLibraryJSON() {
 }
 
 /* ========================= ⭐ AQUARIUS RESET ⭐ ========================= */
-
-function resetLibraryName() {
-    localStorage.removeItem("lastLibraryName");
-    // Clear in-memory state and reload to hub
-    library = [];
-    editingIndex = null;
-    currentLibraryHandle = null;
-    currentLibraryName = null;
-    location.reload();
-}
+/* ========================= ⭐ CONTACT ME (no JS needed) ⭐ ========================= */
+// The old resetLibraryName() function has been removed because the footer button
+// now opens an email instead of resetting the library.
 </script>
 
 <!-- ========================= ⭐ FOOTER ⭐ ========================= -->
