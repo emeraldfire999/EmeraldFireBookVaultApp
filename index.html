@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,57 +5,182 @@
     <title>Emerald Fire Book Vault App</title>
 
     <style>
-        /* ========================= ⭐ GLOBAL STYLES ⭐ ========================= */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: url('https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/Create%20a%20full-screen.png')
-            center center / cover no-repeat fixed;
-            position: relative;
-            z-index: 0;
-        }
+	
+/* ========================= ⭐ GLOBAL STYLES ⭐ ========================= */
 
-        body::before {
-            content: "";
+/* ========================= ⭐ WELCOME SCREEN STYLES ⭐ ========================= */
+
+.welcome-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    /* Full background already handled by body */
+    background: none;
+
+    color: #003300;
+    padding: 40px;
+    z-index: 9999; /* Above everything */
+}
+
+/* Glowing title */
+#welcomeTitle {
+    font-size: 42px;
+    margin-bottom: 20px;
+    color: #003300;
+    text-shadow:
+        0 0 6px rgba(120,255,100,0.6),
+        0 0 12px rgba(120,255,100,0.4),
+        0 0 18px rgba(120,255,100,0.3);
+}
+
+/* Dynamic message text */
+.welcome-message {
+    font-size: 20px;
+    max-width: 700px;
+    margin-bottom: 20px;
+    color: #002200;
+}
+
+/* Dynamic content area */
+#welcomeContent {
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+.welcome-button {
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(120,255,100,0.6);
+    background: rgba(0,0,0,0.25);
+    color: #eaffea;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.welcome-button:hover {
+    background: rgba(0,0,0,0.45);
+    box-shadow: 0 0 10px rgba(120,255,100,0.6);
+    transform: translateY(-2px);
+}
+/* ========================= ⭐ FULL-SCREEN BACKGROUND (GLOBAL) ⭐ ========================= */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    font-family: Arial, sans-serif;
+
+    /* Your original full-screen background */
+    background: url('https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/Create%20a%20full-screen.png?raw=true')
+        center center / cover no-repeat fixed;
+
+    position: relative;
+    z-index: 0;
+}
+
+/* Soft white veil for readability */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.55);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Keep your existing H1 styling */
+h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-top: 10px;
+    color: #003300;
+    text-shadow: 0 0 8px #ccffcc;
+    font-weight: bold;
+}
+
+        /* ========================= ⭐ HUB SCREEN ⭐ ========================= */
+        .hub-screen {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(255,255,255,0.6);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 36px;
-            margin-top: 10px;
-            color: #003300;
-            text-shadow: 0 0 8px #ccffcc;
-            font-weight: bold;
-        }
-
-        .welcome-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: url('https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/Create%20a%20full-screen.png')
-                center center / cover no-repeat;
-            color: white;
+            background: rgba(0,0,0,0.65);
+            color: #eaffea;
             padding: 40px;
             z-index: 9999;
         }
 
-        /* ⭐ FORCE LIBRARY TO BE TALL ENOUGH TO SCROLL ⭐ */
-        #libraryTab {
-            min-height: 200vh;
+        .hub-panel {
+            background: rgba(0,0,0,0.75);
+            border-radius: 12px;
+            padding: 24px 28px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 0 18px rgba(120,255,100,0.4);
         }
+
+        .hub-panel h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .hub-panel button {
+            margin-top: 10px;
+        }
+
+        #existingLibraries {
+            margin-top: 15px;
+            max-height: 220px;
+            overflow-y: auto;
+            border: 1px solid rgba(120,255,100,0.35);
+            border-radius: 8px;
+            padding: 10px;
+            background: rgba(0,0,0,0.35);
+        }
+
+        .library-choice-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 6px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(120,255,100,0.35);
+            background: rgba(0,0,0,0.45);
+            color: #eaffea;
+            cursor: pointer;
+        }
+
+        .library-choice-btn:hover {
+            background: rgba(120,255,100,0.15);
+        }
+
+        .hub-input-row {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .hub-input-row input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #cfcfcf;
+        }
+
 
         /* ========================= ⭐ ICON TAB BAR ⭐ ========================= */
         #iconTabs {
@@ -80,12 +203,7 @@
             justify-content: center;
             align-items: center;
             transition: transform 0.2s ease;
-        }
-
-       icon-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 12px rgba(0, 255, 120, 0.7);
-);
+            flex-direction: column;
         }
 
         .icon-button img {
@@ -94,22 +212,23 @@
             object-fit: contain;
             pointer-events: none;
             filter:
-        drop-shadow(0 0 8px rgba(0, 255, 120, 0.8))
-        drop-shadow(0 0 16px rgba(0, 255, 120, 0.6));
+                drop-shadow(0 0 8px rgba(0, 255, 120, 0.8))
+                drop-shadow(0 0 16px rgba(0, 255, 120, 0.6));
         }
 
         .icon-button:hover img {
-    filter:
-        drop-shadow(0 0 12px rgba(0, 255, 120, 1))
-        drop-shadow(0 0 22px rgba(0, 255, 120, 0.8));
-}
-
+            filter:
+                drop-shadow(0 0 12px rgba(0, 255, 120, 1))
+                drop-shadow(0 0 22px rgba(0, 255, 120, 0.8));
+        }
 
         .icon-tooltip {
             visibility: hidden;
             opacity: 0;
             position: absolute;
             bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
             background: #e0ffe0;
             color: #004400;
             padding: 4px 8px;
@@ -118,6 +237,7 @@
             white-space: nowrap;
             box-shadow: 0 0 6px rgba(0,0,0,0.2);
             transition: opacity 0.2s ease;
+            z-index: 10;
         }
 
         .icon-button:hover .icon-tooltip {
@@ -187,29 +307,6 @@
                 0 0 12px #33ff99;
         }
 
-        .icon-tooltip {
-            visibility: hidden;
-            opacity: 0;
-            position: absolute;
-            bottom: -28px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #e0ffe0;
-            color: #004400;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 14px;
-            white-space: nowrap;
-            box-shadow: 0 0 6px rgba(0,0,0,0.2);
-            transition: opacity 0.2s ease;
-            z-index: 10;
-        }
-
-        .icon-button:hover .icon-tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-
         /* ========================= ⭐ IMPORT BAR BASE ⭐ ========================= */
         #importSubBar {
             display: none;
@@ -241,37 +338,28 @@
             gap: 16px;
         }
 
-        .icon-button {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s ease, filter 0.2s ease;
-            position: relative;
-        }
-
-        .icon-button img {
+        .import-bar .icon-button img {
             width: 200px;
             height: 200px;
             object-fit: contain;
             filter: drop-shadow(0 0 6px #8ff0ff);
         }
 
-        .icon-button:hover img {
+        .import-bar .icon-button:hover img {
             transform: scale(1.08);
             filter: drop-shadow(0 0 10px #a8ffff);
         }
 
-        .icon-button span {
+        .import-bar .icon-button span {
             display: none;
         }
 
-        .icon-button.active img {
+        .import-bar .icon-button.active img {
             filter: drop-shadow(0 0 12px #a8ffff);
             transform: scale(1.05);
         }
 
-        .icon-button .icon-tooltip {
+        .import-bar .icon-button .icon-tooltip {
             display: block;
             visibility: hidden;
             opacity: 0;
@@ -290,89 +378,89 @@
             z-index: 9999;
         }
 
-        .icon-button:hover .icon-tooltip {
+        .import-bar .icon-button:hover .icon-tooltip {
             visibility: visible;
             opacity: 1;
         }
 
+        /* ========================= ⭐ BOOK CARD LAYOUT ⭐ ========================= */
+        .book-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
 
-/* ========================= ⭐ BOOK CARD LAYOUT ⭐ ========================= */
-.book-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
+        /* ⭐ FIXED HEIGHT FOR FRONT + BACK — keeps rows aligned ⭐ */
+        .book-front,
+        .book-back {
+            display: none;
+            min-height: 700px;
+            max-height: 700px;
+            overflow: hidden;
+        }
 
-/* ⭐ FIXED HEIGHT FOR FRONT + BACK — keeps rows aligned ⭐ */
-.book-front,
-.book-back {
-    display: none;
-    min-height: 700px;     /* increased so full cover + larger icons fit */
-    max-height: 700px;
-    overflow: hidden;
-}
+        .book-front.active,
+        .book-back.active {
+            display: block;
+        }
 
-.book-front.active,
-.book-back.active {
-    display: block;
-}
+        /* ⭐ COVER IMAGE — FULL COVER, NO CROPPING ⭐ */
+        .book-cover {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 2 / 3;
+            object-fit: contain;
+            border-radius: 6px;
+            background: #eee;
+        }
 
-/* ⭐ COVER IMAGE — FULL COVER, NO CROPPING ⭐ */
-.book-cover {
-    width: 100%;
-    height: auto;              /* allows natural scaling */
-    aspect-ratio: 2 / 3;       /* keeps real book proportions */
-    object-fit: contain;       /* guarantees full image, no cropping */
-    border-radius: 6px;
-    background: #eee;          /* fills any empty space */
-}
+        /* ⭐ BUTTON ROW ⭐ */
+        .book-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
 
-/* ⭐ BUTTON ROW ⭐ */
-.book-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 10px;
-}
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 4px 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
 
-button {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 4px 4px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-}
+        .delete-btn {
+            background: #d9534f;
+        }
 
-.delete-btn {
-    background: #d9534f;
-}
+        .book-link {
+            display: inline-block;
+            margin: 6px 0;
+            color: #1a73e8;
+            font-weight: bold;
+            text-decoration: none;
+        }
 
-.book-link {
-    display: inline-block;
-    margin: 6px 0;
-    color: #1a73e8;
-    font-weight: bold;
-    text-decoration: none;
-}
+        .book-link:hover {
+            text-decoration: underline;
+        }
 
-.book-link:hover {
-    text-decoration: underline;
-}
+        /* ⭐ GRID SPACING BETWEEN ROWS ⭐ */
+        #libraryList {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            column-gap: 20px;
+            row-gap: 20px;
+            align-items: start;
+        }
 
-/* ⭐ GRID SPACING BETWEEN ROWS ⭐ */
-#libraryList {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    column-gap: 20px;
-    row-gap: 20px; /* vertical spacing between rows */
-    align-items: start;
-}
         /* ========================= ⭐ INPUT FORM ⭐ ========================= */
         .form-section {
             background: rgba(255,255,255,0.95);
@@ -447,139 +535,175 @@ button {
             font-size: 14px;
         }
 
- /* ========================= ⭐ STATIONARY RETURN-TO-TOP BUTTON — PHOENIX ⭐ ========================= */
-#scrollTopBtn {
-    position: static;
-    margin: 40px auto;
-    width: 90px;
-    height: 100px;
-    cursor: pointer;
-    display: block;
-    padding: 0;
-    background: none;
-    border: none;
-    box-shadow: none;
-    opacity: 0;              /* stays hidden until scroll */
-    pointer-events: none;    /* disabled until visible */
-    transition: opacity 0.25s ease, transform 0.25s ease;
-}
+        /* ========================= ⭐ STATUS TOOLTIP CHOOSER ⭐ ========================= */
+        .status-chooser {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            background: #ffffff;
+            border: 1px solid #cfcfcf;
+            border-radius: 6px;
+            padding: 6px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+            z-index: 9999;
+            min-width: 150px;
+            display: none;
+            animation: fadeIn 120ms ease-out;
+        }
 
-#scrollTopBtn img {
-    width: 90px;
-    height: 100px;
-    filter:
-        drop-shadow(0 0 6px rgba(0, 255, 120, 0.8))
-        drop-shadow(0 0 12px rgba(0, 255, 120, 0.6));
-    transition: filter 0.25s ease;
-}
+        .status-chooser.visible {
+            display: block;
+        }
 
-#scrollTopBtn:hover {
-    transform: translateY(-3px);
-}
+        .status-chooser-option {
+            padding: 7px 14px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.92em;
+            transition: background 0.15s ease;
+        }
 
-#scrollTopBtn:hover img {
-    filter:
-        drop-shadow(0 0 10px rgba(0, 255, 120, 0.8))
-        drop-shadow(0 0 18px rgba(0, 255, 120, 0.6));
-}
+        .status-chooser-option:hover {
+            background: #f2f2f2;
+        }
 
-#scrollTopBtn.visible {
-    opacity: 1;
-    pointer-events: auto;
-}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -110%); }
+            to   { opacity: 1; transform: translate(-50%, -100%); }
+        }
 
-/* ========================= ⭐ STATIONARY Back-up BUTTON — PHOENIX ⭐ ========================= */
-#backupBtn {
-    position: static;
-    margin: 20px auto;
-    width: 100px;
-    height: 100px;
-    cursor: pointer;
-    display: block;
-    padding: 0;
-    background: none;
-    border: none;
-    opacity: 0.9;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-}
+        /* ========================= ⭐ STATIONARY RETURN-TO-TOP BUTTON — PHOENIX ⭐ ========================= */
+        #scrollTopBtn {
+            position: static;
+            margin: 40px auto;
+            width: 90px;
+            height: 100px;
+            cursor: pointer;
+            display: block;
+            padding: 0;
+            background: none;
+            border: none;
+            box-shadow: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
 
-#backupBtn img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter:
-        drop-shadow(0 0 6px rgba(0, 255, 120, 0.8))
-        drop-shadow(0 0 12px rgba(0, 255, 120, 0.6));
-}
+        #scrollTopBtn img {
+            width: 90px;
+            height: 100px;
+            filter:
+                drop-shadow(0 0 6px rgba(0, 255, 120, 0.8))
+                drop-shadow(0 0 12px rgba(0, 255, 120, 0.6));
+            transition: filter 0.25s ease;
+        }
 
-#backupBtn:hover {
-    opacity: 1;
-    transform: translateY(-3px);
-}
+        #scrollTopBtn:hover {
+            transform: translateY(-3px);
+        }
 
-#backupBtn:hover img {
-    filter:
-        drop-shadow(0 0 10px rgba(0, 255, 120, 0.8))
-        drop-shadow(0 0 18px rgba(0, 255, 120, 0.6));
-}
+        #scrollTopBtn:hover img {
+            filter:
+                drop-shadow(0 0 10px rgba(0, 255, 120, 0.8))
+                drop-shadow(0 0 18px rgba(0, 255, 120, 0.6));
+        }
 
-/* ⭐ Footer icon row — Phoenix + Dragon side by side ⭐ */
-#footerIcons {
-    display: flex !important;          /* force visibility */
-    visibility: visible !important;    /* prevent collapse */
-    justify-content: center;
-    align-items: center;
-    gap: 10px;                         /* space between icons */
-    margin-top: 40px;                  /* space above row */
-}
+        #scrollTopBtn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
 
-/* ⭐ Override button layout when inside the footer row ⭐ */
-#footerIcons button {
-    display: inline-flex;              /* stable inline layout */
-    margin: 0;
-    position: static;
-    opacity: 1 !important;             /* ensure always visible */
-    pointer-events: auto !important;   /* ensure clickable */
-}    
+        /* ========================= ⭐ STATIONARY Back-up BUTTON — PHOENIX ⭐ ========================= */
+        #backupBtn {
+            position: static;
+            margin: 20px auto;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            display: block;
+            padding: 0;
+            background: none;
+            border: none;
+            opacity: 0.9;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
 
-/* ========================= ⭐ STATIONARY Reset BUTTON — AQUARIUS ⭐ ========================= */
-#resetBtn {
-    position: static;
-    margin: 20px auto;
-    width: 100px;
-    height: 100px;
-    cursor: pointer;
-    display: block;
-    padding: 0;
-    background: none;
-    border: none;
-    opacity: 0.9;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-}
+        #backupBtn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter:
+                drop-shadow(0 0 6px rgba(0, 255, 120, 0.8))
+                drop-shadow(0 0 12px rgba(0, 255, 120, 0.6));
+        }
 
-#resetBtn img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter:
-        drop-shadow(0 0 6px rgba(0, 255, 120, 0.8))
-        drop-shadow(0 0 12px rgba(0, 255, 120, 0.6));
-}
+        #backupBtn:hover {
+            opacity: 1;
+            transform: translateY(-3px);
+        }
 
-#resetBtn:hover {
-    opacity: 1;
-    transform: translateY(-3px);
-}
+        #backupBtn:hover img {
+            filter:
+                drop-shadow(0 0 10px rgba(0, 255, 120, 0.8))
+                drop-shadow(0 0 18px rgba(0, 255, 120, 0.6));
+        }
 
-#resetBtn:hover img {
-    filter:
-        drop-shadow(0 0 10px rgba(0, 255, 120, 0.8))
-        drop-shadow(0 0 18px rgba(0, 255, 120, 0.6));
-}
+        /* ⭐ Footer icon row — Phoenix + Dragon + Aquarius ⭐ */
+        #footerIcons {
+            display: flex !important;
+            visibility: visible !important;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
 
- /* ========================= ⭐ LIBRARY PANEL (SEARCH PANEL STYLING) ⭐ ========================= */
- 
-		.library-panel {
+        #footerIcons button {
+            display: inline-flex;
+            margin: 0;
+            position: static;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
+        /* ========================= ⭐ STATIONARY Reset BUTTON — AQUARIUS ⭐ ========================= */
+        #resetBtn {
+            position: static;
+            margin: 20px auto;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            display: block;
+            padding: 0;
+            background: none;
+            border: none;
+            opacity: 0.9;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        #resetBtn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter:
+                drop-shadow(0 0 6px rgba(0, 255, 120, 0.8))
+                drop-shadow(0 0 12px rgba(0, 255, 120, 0.6));
+        }
+
+        #resetBtn:hover {
+            opacity: 1;
+            transform: translateY(-3px);
+        }
+
+        #resetBtn:hover img {
+            filter:
+                drop-shadow(0 0 10px rgba(0, 255, 120, 0.8))
+                drop-shadow(0 0 18px rgba(0, 255, 120, 0.6));
+        }
+
+        /* ========================= ⭐ LIBRARY PANEL (SEARCH PANEL STYLING) ⭐ ========================= */
+        .library-panel {
             background: rgba(0, 0, 0, 0.35);
             border: 1px solid rgba(120, 255, 100, 0.35);
             border-radius: 10px;
@@ -589,68 +713,61 @@ button {
             backdrop-filter: blur(4px);
             color: #eaffea;
         }
-		/* ⭐ SEARCH ROW LAYOUT ⭐ */
-#searchRow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-}
 
-/* Search bar grows to fill space */
-#searchInput {
-    flex: 1;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(120, 255, 100, 0.35);
-    background: rgba(0, 0, 0, 0.25);
-    color: #eaffea;
-}
+        /* ⭐ SEARCH ROW LAYOUT ⭐ */
+        #searchRow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
 
-/* Secondary sort dropdown stays fixed width */
-#secondarySort {
-    width: 180px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(120, 255, 100, 0.35);
-    background: rgba(0, 0, 0, 0.25);
-    color: #eaffea;
-}
-		
+        #searchInput {
+            flex: 1;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(120, 255, 100, 0.35);
+            background: rgba(0, 0, 0, 0.25);
+            color: #eaffea;
+        }
+
+        #secondarySort {
+            width: 180px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(120, 255, 100, 0.35);
+            background: rgba(0, 0, 0, 0.25);
+            color: #eaffea;
+        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 
+
 <body>
+
+<!-- ========================= ⭐ WELCOME SCREEN (CLEAN VERSION) ⭐ ========================= -->
+<div id="welcomeScreen" class="welcome-screen">
+
+    <h1 id="welcomeTitle">Welcome to the Emerald Fire Book Vault App</h1>
+
+    <p id="welcomeMessage" class="welcome-message"></p>
+
+    <div id="welcomeContent"></div>
+
+    <button id="welcomeButton" class="welcome-button"></button>
+
+</div>
+
+<!-- ========================= ⭐ MAIN APP WRAPPER ⭐ ========================= -->
+<div id="mainApp" style="display:none;">
+
     <!-- ========================= ⭐ LIBRARY TITLE ⭐ ========================= -->
     <h1 id="libraryTitle"></h1>
 
-    <!-- ========================= ⭐ WELCOME SCREEN ⭐ ========================= -->
-    <div id="welcomeScreen" class="welcome-screen">
-        <h1>Emerald Fire Book Vault App</h1>
-
-        <p class="welcome-text">
-            Welcome to the Emerald Fire Book Vault App — your personal archive for every digital book you treasure.
-        </p>
-
-        <p class="welcome-question">
-            What name would you like to call your library?
-        </p>
-
-        <p class="welcome-note">
-            Choose carefully — you’ll only name your library once unless you reset the app.
-        </p>
-
-        <input id="nameInput" placeholder="Enter your name..." class="welcome-input">
-
-        <button onclick="saveLibraryName()" class="welcome-button">
-            Continue
-        </button>
-    </div>
-
     <!-- ========================= ⭐ ICON TAB BAR ⭐ ========================= -->
-    <div id="iconTabs">
+    <div id="iconTabs" style="display:none;">
         <div class="icon-button" onclick="showTab('libraryTab'); resetLibraryView();">
             <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/Librarian.png" alt="Library">
             <span class="icon-tooltip">Library</span>
@@ -675,6 +792,13 @@ button {
             <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/import.png" alt="Import">
             <span class="icon-tooltip">Import</span>
         </div>
+		<!-- ⭐ LIBRARY SWITCHER DRAGON ⭐ -->
+			<div class="icon-button" onclick="returnToHub()">
+				<img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/libraryDragon.png" alt="Return to Hub">
+				<span class="icon-tooltip">Return to Hub</span>
+			</div>
+		
+		
     </div>
 
     <!-- ========================= ⭐ INPUT TAB ⭐ ========================= -->
@@ -766,12 +890,14 @@ button {
                 <div class="book-buttons">
                     <button onclick="addBook()">Save</button>
                     <button onclick="cancelInput()">Cancel</button>
+					<button onclick="fetchAmazonMetadata()">Fetch Amazon Metadata</button>
                 </div>
             </div>
 
             <div id="editPreview" class="preview-card"></div>
         </div>
     </div>
+
 
 <!-- ========================= ⭐ LIBRARY TAB ⭐ ========================= -->
 <div id="libraryTab" class="tab-content" style="display:block;">
@@ -794,112 +920,61 @@ button {
             </select>
         </div>
     </div>
+<!-- ========================= ⭐ SORT TAB ⭐ ========================= -->
+<!-- SORT BAR -->
+<div id="sortOptions" class="sort-options" style="display:none;">
 
-        <!-- SORT BAR -->
-        <div id="sortOptions" class="sort-options" style="display:none;">
-            
-            <div class="icon-button" data-sort="datePrinted" onclick="toggleSort('datePrinted')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/printdate.png" alt="Print Date">
-                <span class="sort-arrow" id="arrow-datePrinted"></span>
-                <span class="icon-tooltip">Print Date</span>
-            </div>
-			
-			
-			<div class="icon-button" data-sort="dateReceived" onclick="toggleSort('dateReceived')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/recieveddate.png" alt="Date Received">
-                <span class="sort-arrow" id="arrow-dateReceived"></span>
-                <span class="icon-tooltip">Date Received</span>
-            </div>
+    <div class="icon-button" data-sort="datePrinted" onclick="toggleSort('datePrinted')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/printdate.png" alt="Print Date">
+        <span class="sort-arrow" id="arrow-datePrinted"></span>
+        <span class="icon-tooltip">Print Date</span>
+    </div>
 
-			<div class="icon-button" data-sort="dateRead" onclick="toggleSort('datePrinted')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/readdate.png" alt="Date Read">
-                <span class="sort-arrow" id="arrow-dateRead"></span>
-                <span class="icon-tooltip">Date Read</span>
-            </div>
-			
-            <div class="icon-button" data-sort="title" onclick="toggleSort('title')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/DracoLectio.png" alt="Title">
-                <span class="sort-arrow" id="arrow-title"></span>
-                <span class="icon-tooltip">Title</span>
-            </div>
+    <div class="icon-button" data-sort="dateReceived" onclick="toggleSort('dateReceived')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/recieveddate.png" alt="Date Received">
+        <span class="sort-arrow" id="arrow-dateReceived"></span>
+        <span class="icon-tooltip">Date Received</span>
+    </div>
 
-            <div class="icon-button" data-sort="author" onclick="toggleSort('author')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/author.png" alt="Author">
-                <span class="sort-arrow" id="arrow-author"></span>
-                <span class="icon-tooltip">Author</span>
-            </div>
+    <div class="icon-button" data-sort="dateRead" onclick="toggleSort('dateRead')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/readdate.png" alt="Date Read">
+        <span class="sort-arrow" id="arrow-dateRead"></span>
+        <span class="icon-tooltip">Date Read</span>
+    </div>
 
-            <div class="icon-button" data-sort="genre" onclick="toggleSort('genre')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/genre.png" alt="Genre">
-                <span class="sort-arrow" id="arrow-genre"></span>
-                <span class="icon-tooltip">Genre</span>
-            </div>
+    <div class="icon-button" data-sort="title" onclick="toggleSort('title')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/DracoLectio.png" alt="Title">
+        <span class="sort-arrow" id="arrow-title"></span>
+        <span class="icon-tooltip">Title</span>
+    </div>
 
-            <div class="icon-button" data-sort="status" onclick="toggleSort('status')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/status.png" alt="Status">
-                <span class="sort-arrow" id="arrow-status"></span>
-                <span class="icon-tooltip">Status</span>
-            </div>
+    <div class="icon-button" data-sort="author" onclick="toggleSort('author')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/author.png" alt="Author">
+        <span class="sort-arrow" id="arrow-author"></span>
+        <span class="icon-tooltip">Author</span>
+    </div>
 
-            <div class="icon-button" data-sort="source" onclick="toggleSort('source')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/source.png" alt="Source">
-                <span class="sort-arrow" id="arrow-source"></span>
-                <span class="icon-tooltip">Source</span>
-            </div>
-        </div>
+    <div class="icon-button" data-sort="genre" onclick="toggleSort('genre')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/genre.png" alt="Genre">
+        <span class="sort-arrow" id="arrow-genre"></span>
+        <span class="icon-tooltip">Genre</span>
+    </div>
 
-        <div id="sortOptions" class="sort-options" style="display:none;">
-            
-            <div class="icon-button" data-sort="datePrinted" onclick="toggleSort('datePrinted')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/printdate.png" alt="Print Date">
-                <span class="sort-arrow" id="arrow-datePrinted"></span>
-                <span class="icon-tooltip">Print Date</span>
-            </div>
-			
-			
-			<div class="icon-button" data-sort="dateReceived" onclick="toggleSort('dateReceived')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/recieveddate.png" alt="Date Received">
-                <span class="sort-arrow" id="arrow-dateReceived"></span>
-                <span class="icon-tooltip">Date Received</span>
-            </div>
+    <div class="icon-button" data-sort="status" onclick="toggleSort('status')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/status.png" alt="Status">
+        <span class="sort-arrow" id="arrow-status"></span>
+        <span class="icon-tooltip">Status</span>
+    </div>
 
-			<div class="icon-button" data-sort="dateRead" onclick="toggleSort('datePrinted')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/readdate.png" alt="Date Read">
-                <span class="sort-arrow" id="arrow-dateRead"></span>
-                <span class="icon-tooltip">Date Read</span>
-            </div>
-			
-            <div class="icon-button" data-sort="title" onclick="toggleSort('title')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/DracoLectio.png" alt="Title">
-                <span class="sort-arrow" id="arrow-title"></span>
-                <span class="icon-tooltip">Title</span>
-            </div>
+    <div class="icon-button" data-sort="source" onclick="toggleSort('source')">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/source.png" alt="Source">
+        <span class="sort-arrow" id="arrow-source"></span>
+        <span class="icon-tooltip">Source</span>
+    </div>
 
-            <div class="icon-button" data-sort="author" onclick="toggleSort('author')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/author.png" alt="Author">
-                <span class="sort-arrow" id="arrow-author"></span>
-                <span class="icon-tooltip">Author</span>
-            </div>
+</div>
 
-            <div class="icon-button" data-sort="genre" onclick="toggleSort('genre')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/genre.png" alt="Genre">
-                <span class="sort-arrow" id="arrow-genre"></span>
-                <span class="icon-tooltip">Genre</span>
-            </div>
-
-            <div class="icon-button" data-sort="status" onclick="toggleSort('status')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/status.png" alt="Status">
-                <span class="sort-arrow" id="arrow-status"></span>
-                <span class="icon-tooltip">Status</span>
-            </div>
-
-            <div class="icon-button" data-sort="source" onclick="toggleSort('source')">
-                <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/source.png" alt="Source">
-                <span class="sort-arrow" id="arrow-source"></span>
-                <span class="icon-tooltip">Source</span>
-            </div>
-        </div>
-
+    <!-- ========================= ⭐ IMPORT TAB ⭐ ========================= -->
         <!-- IMPORT SUB-BAR -->
         <div id="importSubBar" class="sort-options" style="display:none;">
             <div class="icon-button"
@@ -956,7 +1031,7 @@ button {
             <h3>Amazon Import</h3>
             <p id="amazonStatus" class="import-status"></p>
             <input type="text" id="amazonURL" placeholder="Paste Amazon book URL here">
-            <button onclick="processSelectedFiles('amazonStatus')">Process Amazon URL</button>
+            <button onclick="processAmazonURL('amazonStatus')">Process Amazon URL</button>
         </div>
 
         <div id="importCSV" class="importPanel" style="display:none;">
@@ -975,12 +1050,64 @@ button {
 
           <div id="libraryList"></div>
 
-                           
-	<script>
-	
+    <!-- ========================= ⭐ INPUT TAB ⭐ ========================= -->
+    <div id="inputTab" class="tab-content" style="display:none;">
+        ... all your input tab code ...
+    </div>
+<!-- ========================= ⭐ LIBRARY TAB ⭐ ========================= -->
+<div id="libraryTab" class="tab-content" style="display:none;">
+    <!-- Library tab content will be injected or displayed here -->
+</div>
+<!-- ========================= ⭐ END MAIN APP WRAPPER ⭐ ========================= -->
+
+
+<!-- ⭐ ICON FOOTER (hidden until library loads) ⭐ -->
+<div id="footerIcons" style="
+    display:none;
+    justify-content:center;
+    align-items:center;
+    gap:60px;
+    margin-top:40px;
+">
+
+    <!-- Scroll to Top -->
+    <button id="scrollTopBtn" style="background:none; border:none; padding:0;">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/scrollup.png"
+             alt="Scroll to Top"
+             style="width:100px; height:100px;">
+    </button>
+
+    <!-- Backup Library -->
+    <button id="backupBtn" onclick="exportLibraryJSON()" style="background:none; border:none; padding:0;">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/conservat.png"
+             alt="Backup Library"
+             style="width:120px; height:120px;">
+    </button>
+
+    <!-- Rename Library (Display Name Only) -->
+    <button id="resetBtn" onclick="resetLibraryName()" style="background:none; border:none; padding:0;">
+        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/resetart1.png"
+             alt="Reset Library Name"
+             style="width:120px; height:120px;">
+    </button>
+ <!-- ⭐ VERSION TEXT (visible on welcome screen) ⭐ -->
+<div id="poweredBy" style="
+    text-align:center;
+    margin-top:30px;
+    font-size:14px;
+    color:#004400;
+    opacity:0.85;
+    text-shadow:0 0 6px #ccffcc;
+">
+    Powered by the Emerald Fire Book Vault App — v03.17.26
+</div>
+</div>
+</body>
+	    <script>
+		
 /* ========================= ⭐ GLOBAL STATE ⭐ ========================= */
 
-let library = JSON.parse(localStorage.getItem('library')) || [];
+let library = [];
 let editingIndex = null;
 
 let importWasOpened = false;
@@ -996,6 +1123,113 @@ const defaultSources = [
     "Personal Document"
 ];
 
+let rootHandle = null;
+let currentLibraryHandle = null;
+let currentLibraryName = null;
+
+/* ========================= ⭐ FILE SYSTEM BOOKMARK HELPERS ⭐ ========================= */
+
+async function saveHandle(key, handle) {
+    const db = await openDB();
+    const tx = db.transaction("handles", "readwrite");
+    tx.objectStore("handles").put(handle, key);
+    await tx.complete;
+}
+
+async function loadHandle(key) {
+    const db = await openDB();
+    const tx = db.transaction("handles", "readonly");
+    return tx.objectStore("handles").get(key);
+}
+
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open("EFBookHandles", 1);
+
+        request.onupgradeneeded = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains("handles")) {
+                db.createObjectStore("handles");
+            }
+        };
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+/* ========================= ⭐ RESTORE EFBOOK-LIBRARY ON LOAD ⭐ ========================= */
+
+window.addEventListener("DOMContentLoaded", async () => {
+    const saved = await loadHandle("efRootHandle");
+    if (saved) {
+        efRootHandle = saved;
+    }
+});
+
+
+
+function fetchAmazonMetadataFromCard(index) {
+    const book = library[index];
+
+    if (!book.asin) {
+        alert("No ASIN found for this book.");
+        return;
+    }
+
+    fetch(`http://localhost:3000/api/amazon/${book.asin}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.title) book.title = data.title;
+            if (data.author) book.author = data.author;
+            if (data.cover) book.cover = data.cover;
+            if (data.description) book.description = data.description;
+
+            saveLibrary();
+            renderLibrary();
+
+            alert("Amazon metadata updated!");
+        })
+        .catch(err => {
+            console.error("Amazon scraper error:", err);
+            alert("Could not fetch metadata.");
+        });
+}
+
+/* ========================= ⭐ AMAZON METADATA FETCH ⭐ ========================= */
+function fetchAmazonMetadata() {
+    const url = document.getElementById('link').value.trim();
+
+    if (!url) {
+        alert("Please enter an Amazon link first.");
+        return;
+    }
+
+    const asinMatch = url.match(/\/([A-Z0-9]{10})(?:[/?]|$)/i);
+    if (!asinMatch) {
+        alert("No ASIN found in the link.");
+        return;
+    }
+
+    const asin = asinMatch[1];
+
+    fetch(`http://localhost:3000/api/amazon/${asin}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.title) document.getElementById('title').value = data.title;
+            if (data.author) document.getElementById('author').value = data.author;
+            if (data.cover) document.getElementById('cover').value = data.cover;
+            if (data.description) document.getElementById('description').value = data.description;
+
+            updatePreviewFromForm();
+            alert("Amazon metadata imported!");
+        })
+        .catch(err => {
+            console.error("Amazon scraper error:", err);
+            alert("Could not fetch metadata.");
+        });
+} 
+
 /* ========================= ⭐ SOURCE SYSTEM — LEARNING DROPDOWN ⭐ ========================= */
 
 function loadSavedSources() {
@@ -1004,7 +1238,8 @@ function loadSavedSources() {
 
 function saveCustomSource(source) {
     const saved = loadSavedSources();
-    const normalized = source.trim();
+    const normalized = (source || "").trim();
+    if (!normalized) return;
 
     if (!saved.includes(normalized) && !defaultSources.includes(normalized)) {
         saved.push(normalized);
@@ -1012,10 +1247,11 @@ function saveCustomSource(source) {
     }
 }
 
-function populateSourceDropdown() {
+function populateSourceDropdown() {   // ⭐ THIS IS “A”
     const select = document.getElementById("sourceSelect");
-    const saved = loadSavedSources();
+    if (!select) return;
 
+    const saved = loadSavedSources();
     select.innerHTML = "";
 
     [...defaultSources, ...saved].forEach(src => {
@@ -1029,53 +1265,267 @@ function populateSourceDropdown() {
     customOpt.textContent = "Other…";
     customOpt.value = "__custom__";
     select.appendChild(customOpt);
+
+    select.value = "Amazon Purchase";
 }
 
-/* ========================= ⭐ LIBRARY NAME SYSTEM ⭐ ========================= */
+// ========================= ⭐ STARTUP LOGIC ⭐ =========================
 
-function saveLibraryName() {
-    const name = document.getElementById('nameInput').value.trim();
-    if (!name) {
-        alert("Please enter a name.");
-        return;
+// Global state
+let efRootHandle = null;
+let currentStep = 0; // 0 = choose EFBook-Library folder, 1 = choose/create library, 2 = name new library
+
+// Unified initializer
+document.addEventListener("DOMContentLoaded", () => {
+
+    hideMainUI();
+    showWelcomeStep0();
+
+    // ENTER-TO-SEARCH
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+        searchInput.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                renderLibrary();
+            }
+        });
     }
 
-    localStorage.setItem('libraryName', name);
+    // Scroll-to-top Phoenix
+    const btn = document.getElementById("scrollTopBtn");
+    if (btn) {
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 300) {
+                btn.classList.add("visible");
+            } else {
+                btn.classList.remove("visible");
+            }
+        });
 
-    let finalName = name;
-    if (!finalName.toLowerCase().includes("library")) {
-        finalName += "'s Library";
+        btn.addEventListener("click", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
     }
 
-    document.getElementById('libraryTitle').textContent = finalName;
+    // Auto-save on close
+    window.addEventListener("beforeunload", () => {
+        saveLibraryToDisk();
+    });
+}); // ← THIS is the ONLY correct closer
 
-    document.getElementById('welcomeScreen').style.display = "none";
-    showTab('libraryTab');
+// Hide everything except welcome screen
+function hideMainUI() {
+    const mainUI = document.getElementById("mainApp");
+    if (mainUI) mainUI.style.display = "none";
+
+    const footer = document.getElementById("footerIcons");
+    if (footer) footer.style.display = "none";
+
+    const iconTabs = document.getElementById("iconTabs");
+    if (iconTabs) iconTabs.style.display = "none";
+
+    const libraryTab = document.getElementById("libraryTab");
+    if (libraryTab) libraryTab.style.display = "none";
 }
 
-function initializeLibraryName() {
-    const savedName = localStorage.getItem('libraryName');
+// Show main UI after welcome flow is complete
+function showMainUI() {
+    // Show main app + footer
+    const mainUI = document.getElementById("mainApp");
+    if (mainUI) mainUI.style.display = "block";
 
-    if (savedName) {
-        document.getElementById('welcomeScreen').style.display = "none";
-        document.getElementById('libraryTab').style.display = "block";
+    const footer = document.getElementById("footerIcons");
+    if (footer) footer.style.display = "flex";
 
-        const header = document.getElementById('libraryTitle');
-        if (header) header.textContent = savedName;
+    // Hide welcome screen
+    const welcome = document.getElementById("welcomeScreen");
+    if (welcome) welcome.style.display = "none";
 
-        populateSourceDropdown();
-    } else {
-        document.getElementById('welcomeScreen').style.display = "flex";
-        document.getElementById('libraryTab').style.display = "none";
+    // Show icon tab bar
+    const iconTabs = document.getElementById("iconTabs");
+    if (iconTabs) iconTabs.style.display = "flex";
 
-        populateSourceDropdown();
+    // Show library tab by default
+    const libraryTab = document.getElementById("libraryTab");
+    if (libraryTab) libraryTab.style.display = "block";
+
+    // Update header with library name
+    const header = document.getElementById("libraryTitle");
+    if (header && currentLibraryName) {
+        let finalName = currentLibraryName;
+        if (!finalName.toLowerCase().includes("library")) {
+            finalName += " Library";
+        }
+        header.textContent = finalName;
+    }
+
+    // Initialize dropdowns + sort arrows
+    populateSourceDropdown();
+    updateSortArrows();
+}
+
+
+// ========================= ⭐ STEP 0 — Choose EFBook-Library Folder ⭐ =========================
+
+function showWelcomeStep0() {
+    currentStep = 0;
+
+    // Updated welcome message for manual folder creation
+    document.getElementById("welcomeMessage").textContent =
+        "First, create a folder named EFBook-Library inside your Documents folder. Then click the button below to select it.";
+
+    // Updated button text
+    document.getElementById("welcomeContent").innerHTML = `
+        <button id="chooseFolderBtn" class="welcome-button">
+            Select EFBook-Library Folder
+        </button>
+    `;
+
+    document.getElementById("welcomeButton").style.display = "none";
+
+    document.getElementById("chooseFolderBtn").onclick = chooseEFRoot;
+}
+
+async function chooseEFRoot() {
+    try {
+        // Let the user pick the EFBook-Library folder
+        efRootHandle = await window.showDirectoryPicker({ mode: "readwrite" });
+
+        // Check if any subfolders exist (existing libraries)
+        let hasLibraries = false;
+        for await (const entry of efRootHandle.values()) {
+            if (entry.kind === "directory") {
+                hasLibraries = true;
+                break;
+            }
+        }
+
+        // Move to the correct next step
+        if (hasLibraries) {
+            showWelcomeStep1Existing();
+        } else {
+            showWelcomeStep1New();
+        }
+
+    } catch (err) {
+        console.log("Folder selection cancelled or error:", err);
     }
 }
 
-/* ========================= ⭐ SAVE LIBRARY ⭐ ========================= */
+
+// ========================= ⭐ STEP 1A — Existing Libraries ⭐ =========================
+
+async function showWelcomeStep1Existing() {
+    currentStep = 1;
+
+    document.getElementById("welcomeMessage").textContent =
+        "Which library would you like to open?";
+
+    let listHTML = "";
+
+    // List all subfolders inside EFBook-Library
+    for await (const entry of efRootHandle.values()) {
+        if (entry.kind === "directory") {
+            listHTML += `
+                <button class="welcome-button" onclick="openExistingLibrary('${entry.name}')">
+                    ${entry.name}
+                </button><br>
+            `;
+        }
+    }
+
+    // Add option to create a new library
+    listHTML += `
+        <p style="margin-top:20px;">Or create a new library:</p>
+        <input id="newLibraryName" placeholder="Enter new library name..." class="welcome-input">
+    `;
+
+    document.getElementById("welcomeContent").innerHTML = listHTML;
+
+    document.getElementById("welcomeButton").textContent = "Continue";
+    document.getElementById("welcomeButton").style.display = "inline-block";
+    document.getElementById("welcomeButton").onclick = startNewLibraryFromWelcome;
+}
+
+async function openExistingLibrary(name) {
+    const libraryHandle = await efRootHandle.getDirectoryHandle(name);
+    enterLibrary(libraryHandle);
+}
+
+
+// ========================= ⭐ STEP 1B — No Libraries Yet (New User) ⭐ =========================
+
+function showWelcomeStep1New() {
+    currentStep = 1;
+
+    document.getElementById("welcomeMessage").textContent =
+        "What would you like to name your first library?";
+
+    document.getElementById("welcomeContent").innerHTML = `
+        <input id="newLibraryName" placeholder="Enter your library name..." class="welcome-input">
+    `;
+
+    document.getElementById("welcomeButton").textContent = "Continue";
+    document.getElementById("welcomeButton").style.display = "inline-block";
+    document.getElementById("welcomeButton").onclick = startNewLibraryFromWelcome;
+}
+
+
+// ========================= ⭐ STEP 2 — Create New Library ⭐ =========================
+
+async function startNewLibraryFromWelcome() {
+    const name = document.getElementById("newLibraryName").value.trim();
+    if (!name) return;
+
+    // Create the new library folder inside EFBook-Library
+    const newLibHandle = await efRootHandle.getDirectoryHandle(name, { create: true });
+
+    // Enter the new library
+    enterLibrary(newLibHandle);
+}
+
+
+// ========================= ⭐ ENTER LIBRARY ⭐ =========================
+async function enterLibrary(libraryHandle) {
+    // Save handle + name
+    currentLibraryHandle = libraryHandle;
+    currentLibraryName = libraryHandle.name;
+
+    // Load library.json into the actual library array
+    try {
+        const fileHandle = await libraryHandle.getFileHandle("library.json");
+        const file = await fileHandle.getFile();
+        const text = await file.text();
+        library = JSON.parse(text || "[]");
+    } catch {
+        library = [];
+    }
+
+    // Show the main UI
+    showMainUI();
+36
+    // Render the library now that it's loaded
+    renderLibrary();
+}
+
+/* ========================= ⭐ SAVE LIBRARY (LOCAL + DISK) ⭐ ========================= */
 
 function saveLibrary() {
     localStorage.setItem('library', JSON.stringify(library));
+    saveLibraryToDisk(); // async, but we don't await here
+}
+
+async function saveLibraryToDisk() {
+    if (!currentLibraryHandle) return;
+
+    try {
+        const fileHandle = await currentLibraryHandle.getFileHandle("library.json", { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(JSON.stringify(library, null, 2));
+        await writable.close();
+    } catch (e) {
+        console.error("Error saving library.json:", e);
+    }
 }
 
 /* ========================= ⭐ SOURCE CUSTOM FIELD HANDLER ⭐ ========================= */
@@ -1091,9 +1541,7 @@ function handleSourceChange() {
         customInput.style.display = "none";
     }
 }
-</script>
 
-<script>
 /* ========================= ⭐ TAB + PANEL SYSTEM ⭐ ========================= */
 
 function showTab(tabId) {
@@ -1131,6 +1579,7 @@ function resetLibraryView() {
         renderLibrary();
     }, 10);
 }
+
 /* ========================= ⭐ SHOW SEARCH / SORT / IMPORT PANELS ⭐ ========================= */
 
 function showLibraryPanel(panelId) {
@@ -1203,15 +1652,15 @@ function selectFiles(inputId) {
 let selectedFiles = [];
 
 function handleFileSelection(event) {
-    selectedFiles = Array.from(event.target.files);
+    selectedFiles = Array.from(event.target.files || []);
 }
-
 
 /* ========================= ⭐ SORT STATE ⭐ ========================= */
 
 let sortState = {
     dateReceived: null,
     datePrinted: null,
+    dateRead: null,
     title: null,
     author: null,
     genre: null,
@@ -1238,7 +1687,7 @@ function toggleSort(field) {
     renderLibrary();
 }
 
-/* ========================= ⭐ SORT ARROW UPDATER (Unified) ⭐ ========================= */
+/* ========================= ⭐ SORT ARROW UPDATER ⭐ ========================= */
 
 function updateSortArrows() {
     document.querySelectorAll('.sort-arrow').forEach(arrow => {
@@ -1257,50 +1706,22 @@ function updateSortArrows() {
     arrowEl.classList.add("active");
 }
 
-/* ========================= ⭐ DOMContentLoaded INITIALIZER ⭐ ========================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-    document.documentElement.style.visibility = "visible";
-
-    initializeLibraryName();
-    showTab('libraryTab');
-
-    updateSortArrows();
-
-    setTimeout(() => {
-        renderLibrary();
-    }, 50);
-});
-
-</script>
-
-<script>
-// ⭐ ENTER-TO-SEARCH LISTENER ⭐
-document.getElementById("searchInput").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-        console.log("ENTER pressed → running search");
-        renderLibrary();
-    }
-});
-</script>
-
-<script>
 /* ========================= ⭐ EPUB IMPORT — LIBER DIGITALIS ⭐ ========================= */
 
 async function importEPUBFile(file) {
     const zip = await JSZip.loadAsync(file);
     const parser = new DOMParser();
 
-    /* ----- 1. Locate OPF file ----- */
+    // 1. Locate OPF file
     const containerText = await zip.file("META-INF/container.xml").async("text");
     const containerXML = parser.parseFromString(containerText, "application/xml");
     const opfPath = containerXML.querySelector("rootfile").getAttribute("full-path");
 
-    /* ----- 2. Load OPF ----- */
+    // 2. Load OPF
     const opfText = await zip.file(opfPath).async("text");
     const opfXML = parser.parseFromString(opfText, "application/xml");
 
-    /* ----- 3. Extract metadata ----- */
+    // 3. Extract metadata
     const title =
         opfXML.querySelector("metadata > title")?.textContent ||
         file.name.replace(".epub", "");
@@ -1309,11 +1730,10 @@ async function importEPUBFile(file) {
         opfXML.querySelector("metadata > creator")?.textContent ||
         "Unknown";
 
-    /* ========================= ⭐ COVER EXTRACTION ⭐ ========================= */
+    // COVER EXTRACTION
     let coverBlob = null;
     let coverHref = null;
 
-    // A) meta[name="cover"]
     const metaCover = opfXML.querySelector('meta[name="cover"]');
     if (metaCover) {
         const coverId = metaCover.getAttribute("content");
@@ -1321,20 +1741,17 @@ async function importEPUBFile(file) {
         if (coverItem) coverHref = coverItem.getAttribute("href");
     }
 
-    // B) properties="cover-image"
     if (!coverHref) {
         const propCover = opfXML.querySelector('item[properties~="cover-image"]');
         if (propCover) coverHref = propCover.getAttribute("href");
     }
 
-    // C) id contains "cover"
     if (!coverHref) {
         const idCover = Array.from(opfXML.querySelectorAll("item"))
             .find(i => i.getAttribute("id")?.toLowerCase().includes("cover"));
         if (idCover) coverHref = idCover.getAttribute("href");
     }
 
-    // D) XHTML wrapper
     if (coverHref && (coverHref.endsWith(".xhtml") || coverHref.endsWith(".html"))) {
         const basePath = opfPath.substring(0, opfPath.lastIndexOf("/") + 1);
         const wrapperText = await zip.file(basePath + coverHref).async("text");
@@ -1344,29 +1761,53 @@ async function importEPUBFile(file) {
         if (img) coverHref = img.getAttribute("src");
     }
 
-    // E) Load actual image
     if (coverHref) {
         const basePath = opfPath.substring(0, opfPath.lastIndexOf("/") + 1);
         const coverFile = zip.file(basePath + coverHref);
         if (coverFile) coverBlob = await coverFile.async("blob");
     }
 
-    /* ========================= ⭐ BUILD BOOK OBJECT ⭐ ========================= */
+    // Save EPUB file into library folder (books subfolder)
+    let storedFilePath = "";
+    if (currentLibraryHandle) {
+        try {
+            const booksDir = await currentLibraryHandle.getDirectoryHandle("books", { create: true });
+            const fileHandle = await booksDir.getFileHandle(file.name, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(file);
+            await writable.close();
+            storedFilePath = "books/" + file.name;
+        } catch (e) {
+            console.error("Error saving EPUB into books folder:", e);
+        }
+    }
 
     const today = new Date().toISOString().split("T")[0];
     const fallbackCover =
         "https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/repair-manual.png?raw=true";
 
+    const coverURL = coverBlob ? URL.createObjectURL(coverBlob) : fallbackCover;
+
     const newBook = {
-        id: Date.now() + Math.random(),
+        id: crypto.randomUUID(),
         title,
         author,
         format: "EPUB",
         status: "TBR",
         dateReceived: today,
         source: "BookFunnel",
-        cover: coverBlob ? URL.createObjectURL(coverBlob) : fallbackCover,
-        coverStatus: coverBlob ? "OK" : "Missing"
+        cover: coverURL,
+        coverStatus: coverBlob ? "OK" : "Missing",
+        filePath: storedFilePath,
+        reviewed: "No",
+        description: "",
+        series: "",
+        seriesNumber: "",
+        datePrinted: "",
+        dateRead: "",
+        link: "",
+        genre: "",
+        timestamp: Date.now()
     };
 
     library.push(newBook);
@@ -1394,6 +1835,180 @@ async function processEPUBFiles(statusId) {
     status.textContent = "EPUB import complete!";
 }
 
+/* ========================= ⭐ PDF IMPORT (SIMPLE) ⭐ ========================= */
+
+async function processSelectedPDFFiles(statusId) {
+    const status = document.getElementById(statusId);
+    const input = document.getElementById("pdfInput");
+
+    if (!input.files || input.files.length === 0) {
+        status.textContent = "No PDF files selected.";
+        return;
+    }
+
+    status.textContent = "Importing PDF files...";
+
+    const today = new Date().toISOString().split("T")[0];
+    const fallbackCover =
+        "https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/repair-manual.png?raw=true";
+
+    for (const file of input.files) {
+        let storedFilePath = "";
+        if (currentLibraryHandle) {
+            try {
+                const booksDir = await currentLibraryHandle.getDirectoryHandle("books", { create: true });
+                const fileHandle = await booksDir.getFileHandle(file.name, { create: true });
+                const writable = await fileHandle.createWritable();
+                await writable.write(file);
+                await writable.close();
+                storedFilePath = "books/" + file.name;
+            } catch (e) {
+                console.error("Error saving PDF into books folder:", e);
+            }
+        }
+
+        const newBook = {
+            id: crypto.randomUUID(),
+            title: file.name.replace(/\.pdf$/i, ""),
+            author: "Unknown",
+            format: "PDF",
+            status: "TBR",
+            dateReceived: today,
+            source: "Personal Document",
+            cover: fallbackCover,
+            coverStatus: "Missing",
+            filePath: storedFilePath,
+            reviewed: "No",
+            description: "",
+            series: "",
+            seriesNumber: "",
+            datePrinted: "",
+            dateRead: "",
+            link: "",
+            genre: "",
+            timestamp: Date.now()
+        };
+
+        library.push(newBook);
+    }
+
+    saveLibrary();
+    renderLibrary();
+    status.textContent = "PDF import complete!";
+}
+
+
+
+/* ========================= ⭐ AMAZON URL IMPORT ⭐ ========================= */
+
+function processAmazonURL(statusId) {
+    const status = document.getElementById(statusId);
+    const raw = (document.getElementById("amazonURL").value || "").trim();
+
+    if (!raw) {
+        status.textContent = "Please paste an Amazon URL.";
+        return;
+    }
+
+    if (!raw.includes("amazon.")) {
+        status.textContent = "This does not appear to be an Amazon link.";
+        return;
+    }
+
+    // Extract ASIN
+    const asinMatch = raw.match(/\/([A-Z0-9]{10})(?:[/?]|$)/i);
+    const asin = asinMatch ? asinMatch[1] : null;
+
+    if (!asin) {
+        status.textContent = "Amazon link found, but no ASIN detected.";
+        return;
+    }
+
+    // Normalize URL
+    const domainMatch = raw.match(/https?:\/\/(www\.)?amazon\.[a-z.]+/i);
+    const domain = domainMatch ? domainMatch[0] : "https://www.amazon.com";
+    const cleanURL = `${domain}/dp/${asin}`;
+
+    // Build a FULL book object matching addBook()
+    const book = {
+        id: crypto.randomUUID(),
+        title: "Unknown Title",
+        author: "Unknown Author",
+        genre: "",
+        source: "Amazon",
+        series: "",
+        seriesNumber: "",
+        dateReceived: new Date().toLocaleDateString("en-CA"),
+        dateRead: "",
+        datePrinted: "",
+        reviewed: "No",
+        cover: "https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/repair-manual.png",
+        link: cleanURL,
+        status: "TBR",
+        description: "",
+        timestamp: Date.now(),
+        filePath: "",
+        asin: asin
+    };
+
+    // ⭐ Call your local Amazon scraper (Apify-style)
+    fetch(`http://localhost:3000/api/amazon/${asin}`)
+        .then(res => res.json())
+        .then(data => {
+    if (data.title) book.title = data.title;
+    if (data.author) book.author = data.author;
+    if (data.cover) book.cover = data.cover;
+    if (data.description) book.description = data.description;
+    if (data.genre) book.genre = data.genre;   // ⭐ NEW LINE
+
+    library.push(book);
+    saveLibrary();
+    renderLibrary();
+    showTab('libraryTab');
+    status.textContent = "Amazon metadata imported!";
+})
+        .catch(err => {
+            console.error("Scraper error:", err);
+
+            // Fallback: still add the placeholder book
+            library.push(book);
+            saveLibrary();
+            renderLibrary();
+            showTab('libraryTab');
+            status.textContent = "Amazon link added (scraper unavailable).";
+        });
+}
+	
+	
+	
+/* ========================= ⭐ CSV PARSER HELPER ⭐ ========================= */
+
+function parseCSVLine(line) {
+    const result = [];
+    let current = "";
+    let insideQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"' && line[i + 1] !== '"') {
+            insideQuotes = !insideQuotes;
+            continue;
+        }
+
+        if (char === ',' && !insideQuotes) {
+            result.push(current);
+            current = "";
+        } else {
+            current += char;
+        }
+    }
+
+    result.push(current);
+    return result;
+}
+
+
 /* ========================= ⭐ CSV IMPORT — CODEX TABULARUM ⭐ ========================= */
 
 async function importCSVFromFile() {
@@ -1412,6 +2027,7 @@ async function importCSVFromFile() {
         return;
     }
 
+    // Normalize headers to lowercase
     const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
 
     function getValue(rowObj, key) {
@@ -1419,7 +2035,7 @@ async function importCSVFromFile() {
     }
 
     for (let i = 1; i < lines.length; i++) {
-        const row = lines[i].split(",");
+        const row = parseCSVLine(lines[i]);
         if (row.every(cell => cell.trim() === "")) continue;
 
         const rowObj = {};
@@ -1432,21 +2048,29 @@ async function importCSVFromFile() {
 
         const newBook = {
             id: crypto.randomUUID(),
+
+            // Correct mappings for your new CSV
             title: getValue(rowObj, "title"),
             author: getValue(rowObj, "author"),
-            genre: getValue(rowObj, "genre"),
-            source: getValue(rowObj, "source") || "CSV Import",
+            genre: getValue(rowObj, "genres"),
+            source: getValue(rowObj, "relationshipsubtype") || "CSV Import",
             series: getValue(rowObj, "series"),
-            seriesNumber: getValue(rowObj, "seriesnumber"),
-            dateReceived: getValue(rowObj, "datereceived") || todayISO,
-            datePrinted: getValue(rowObj, "dateprinted"),
+            seriesNumber: getValue(rowObj, "series position"),
+            dateReceived: getValue(rowObj, "acquired date") || todayISO,
+
+            // Fields no longer in CSV
+            datePrinted: "",
             dateRead: "",
             reviewed: "No",
-            cover: getValue(rowObj, "cover"),
+
+            // Use ASIN/ISBN to fetch cover
+            cover: getValue(rowObj, "isbn / asin (amazon id)"),
+
             link: getValue(rowObj, "link"),
-            status: getValue(rowObj, "status") || "TBR",
-            description: getValue(rowObj, "description"),
-            timestamp: Date.now()
+            status: "TBR",
+            description: "",
+            timestamp: Date.now(),
+            filePath: ""
         };
 
         library.push(newBook);
@@ -1489,9 +2113,19 @@ async function importJSONBackup() {
         alert("Could not parse JSON backup.");
     }
 }
-</script>
+  
+ /* ========================= ⭐ SWITCH BETWEEN DIFFERENT LIBRARIES ⭐ ========================= */
 
-<script>
+function returnToHub() {
+    // Hide the main app UI
+    document.getElementById("mainApp").style.display = "none";
+
+    // Show the welcome screen again (your welcome screen uses flex layout)
+    document.getElementById("welcomeScreen").style.display = "flex";
+
+    // Load the list of existing libraries
+    showWelcomeStep1Existing();
+}
 /* ========================= ⭐ ADD BOOK TO LIBRARY ⭐ ========================= */
 
 function addBook() {
@@ -1519,7 +2153,8 @@ function addBook() {
         link: document.getElementById('link').value,
         status: document.getElementById('status').value,
         description: document.getElementById('description').value,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        filePath: ""
     };
 
     saveCustomSource(sourceValue);
@@ -1562,7 +2197,7 @@ function editBook(index) {
     document.getElementById('reviewed').value = book.reviewed || 'No';
     document.getElementById('cover').value = book.cover || '';
     document.getElementById('link').value = book.link || '';
-    document.getElementById('status').value = book.status || '';
+    document.getElementById('status').value = book.status || 'TBR';
     document.getElementById('description').value = book.description || '';
 
     const sourceSelect = document.getElementById('sourceSelect');
@@ -1590,8 +2225,22 @@ function editBook(index) {
     const preview = document.getElementById("editPreview");
     preview.style.display = "block";
     updatePreviewFromForm();
-}
 
+    /* ⭐ Auto-fetch updated Amazon metadata when editing ⭐ */
+    if (book.source === "Amazon" && book.asin) {
+        fetch(`http://localhost:3000/api/amazon/${book.asin}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.title) document.getElementById('title').value = data.title;
+                if (data.author) document.getElementById('author').value = data.author;
+                if (data.cover) document.getElementById('cover').value = data.cover;
+                if (data.description) document.getElementById('description').value = data.description;
+
+                updatePreviewFromForm();
+            })
+            .catch(err => console.error("Amazon scraper error:", err));
+    }
+}
 /* ========================= ⭐ CLEAR INPUT FORM ⭐ ========================= */
 
 function clearForm() {
@@ -1655,6 +2304,7 @@ function deleteBook(index) {
     renderLibrary();
 }
 
+
 /* ========================= ⭐ PREVIEW CARD (LIVE UPDATE) ⭐ ========================= */
 
 function updatePreviewFromForm() {
@@ -1701,28 +2351,92 @@ function updatePreviewFromForm() {
         </div>
     `;
 }
-</script>
 
-<script>
+/* ⭐ CLICK A STATUS OPTION ⭐ */
+document.addEventListener('click', function(event) {
+    const option = event.target.closest('.status-chooser-option');
+    if (!option) return;
+
+    const newStatus = option.dataset.value;
+
+    const chooser = option.closest('.status-chooser');
+    const id = chooser.id.replace('status-chooser-', '');
+
+    const bookIndex = library.findIndex(b => b.id == id);
+    if (bookIndex === -1) return;
+
+    const book = library[bookIndex];
+    book.status = newStatus;
+
+    if (newStatus === "Finished") {
+        book.dateRead = new Date().toISOString().split('T')[0];
+        const reviewed = confirm("Mark as reviewed?");
+        book.reviewed = reviewed ? "Yes" : "No";
+    }
+
+    saveLibrary();
+    renderLibrary();
+
+    chooser.classList.remove('visible');
+});
+
+/* ⭐ CLICK OUTSIDE TO CLOSE STATUS CHOOSER ⭐ */
+document.addEventListener('click', function(event) {
+    const isChooser = event.target.closest('.status-chooser');
+    const isStatusLine = event.target.closest('.status-line');
+
+    if (!isChooser && !isStatusLine) {
+        document.querySelectorAll('.status-chooser.visible')
+            .forEach(el => el.classList.remove('visible'));
+    }
+});
+
+/* ========================= ⭐ OPEN BOOK FILE IN READER (FOR LOCAL EPUB/PDF) ⭐ ========================= */
+
+async function openBookFile(book) {
+    if (!book.filePath || !currentLibraryHandle) {
+        if (book.link) {
+            window.open(book.link, "_blank");
+        } else {
+            alert("No local file or link is associated with this book.");
+        }
+        return;
+    }
+
+    try {
+        const parts = book.filePath.split("/");
+        let dir = currentLibraryHandle;
+        for (let i = 0; i < parts.length - 1; i++) {
+            dir = await dir.getDirectoryHandle(parts[i], { create: false });
+        }
+        const fileHandle = await dir.getFileHandle(parts[parts.length - 1], { create: false });
+        const file = await fileHandle.getFile();
+        const url = URL.createObjectURL(file);
+        window.open(url, "_blank");
+    } catch (e) {
+        console.error("Error opening book file:", e);
+        alert("Could not open the local file for this book.");
+    }
+}
+
 /* ========================= ⭐ RENDER LIBRARY — MASTER FUNCTION ⭐ ========================= */
-console.time("renderLibrary");
-console.log("renderLibrary called");
+
 function renderLibrary() {
     const list = document.getElementById('libraryList');
     if (!list) return;
 
     list.innerHTML = "";
 
-    /* ========================= ⭐ DEFAULT SORT: NEWEST RECEIVED FIRST ⭐ ========================= */
     let filtered = [...library];
 
+    // Default sort: newest received first
     filtered.sort((a, b) => {
         const da = a.dateReceived ? new Date(a.dateReceived) : new Date(0);
         const db = b.dateReceived ? new Date(b.dateReceived) : new Date(0);
         return db - da;
     });
 
-    /* ========================= ⭐ SEARCH FILTER ⭐ ========================= */
+    // SEARCH FILTER
     const searchInput = document.getElementById("searchInput");
     const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
 
@@ -1734,8 +2448,7 @@ function renderLibrary() {
         );
     }
 
-
-    /* ========================= ⭐ SORTING ⭐ ========================= */
+    // SORTING
     const activeSort = Object.keys(sortState).find(key => sortState[key]);
     const direction = activeSort ? sortState[activeSort] : null;
 
@@ -1781,15 +2494,14 @@ function renderLibrary() {
         return 0;
     });
 
-    /* ========================= ⭐ RENDER EACH BOOK-CARD ⭐ ========================= */
+    const FALLBACK =
+        "https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/repair-manual.png?raw=true";
+
     filtered.forEach((book) => {
         const realIndex = library.findIndex(b => b.id === book.id);
 
         const item = document.createElement('div');
         item.className = 'book-card';
-
-        const FALLBACK =
-            "https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/repair-manual.png?raw=true";
 
         const coverToShow =
             book.cover && !book.cover.startsWith("blob:null")
@@ -1797,68 +2509,86 @@ function renderLibrary() {
                 : FALLBACK;
 
         item.innerHTML = `
-            <!-- ========================= ⭐ FRONT OF CARD ⭐ ========================= -->
-            <div class="book-front active" id="front-${realIndex}">
-                <img src="${coverToShow}"
-                     loading="lazy"
-                     class="book-cover"
-                     alt="Cover"
-                     onerror="this.onerror=null; this.src='${FALLBACK}';">
+<!-- ========================= ⭐ FRONT OF CARD ⭐ ========================= -->
+<div class="book-front active" id="front-${realIndex}">
+    <img src="${coverToShow}"
+         loading="lazy"
+         class="book-cover"
+         alt="Cover"
+         onerror="this.onerror=null; this.src='${FALLBACK}';">
 
-                <div style="
-                    max-height: 3.2em;
-                    overflow-y: auto;
-                    margin-bottom: 6px;
-                ">
-                    <h3 style="
-                        margin: 0;
-                        line-height: 1.2em;
-                        display: -webkit-box;
-                        -webkit-line-clamp: 2;
-                        -webkit-box-orient: vertical;
-                        overflow: hidden;
-                    ">
-                        ${book.title || ""}
-                    </h3>
-                </div>
+    <div style="
+        max-height: 3.2em;
+        overflow-y: auto;
+        margin-bottom: 6px;
+    ">
+        <h3 style="
+            margin: 0;
+            line-height: 1.2em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        ">
+            ${book.title || ""}
+        </h3>
+    </div>
 
-                <p>${book.author || ""}</p>
-                <p><strong>Status:</strong> ${book.status || ""}</p>
-                <p><strong>Series:</strong> ${book.series || ""}</p>
-                <p><strong>Reviewed:</strong> ${book.reviewed || ""}</p>
-                ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
+    <p>${book.author || ""}</p>
 
-                <div class="book-buttons">
-                    <button onclick="editBook(${realIndex})">Edit</button>
-                    <button class="delete-btn" onclick="deleteBook(${realIndex})">Delete</button>
-                    <button onclick="toggleCard(${realIndex})">More</button>
-                </div>
-            </div>
+    <!-- ⭐ SINGLE STATUS LINE (CLICKABLE) ⭐ -->
+    <p class="status-line" onclick="openStatusChooser('${book.id}', event)">
+        <strong>Status:</strong> ${book.status || ""}
+    </p>
 
+    <!-- ⭐ STATUS CHOOSER TOOLTIP ⭐ -->
+    <div class="status-chooser" id="status-chooser-${book.id}">
+        <div class="status-chooser-option" data-value="TBR">TBR</div>
+        <div class="status-chooser-option" data-value="ARC">ARC</div>
+        <div class="status-chooser-option" data-value="Currently Reading">Currently Reading</div>
+        <div class="status-chooser-option" data-value="Finished">Finished</div>
+        <div class="status-chooser-option" data-value="DNF">DNF</div>
+        <div class="status-chooser-option" data-value="On Hold">On Hold</div>
+    </div>
 
+    <p><strong>Series:</strong> ${book.series || ""}</p>
+    <p><strong>Reviewed:</strong> ${book.reviewed || ""}</p>
 
-            <!-- ========================= ⭐ BACK OF CARD ⭐ ========================= -->
-            <div class="book-back" id="back-${realIndex}">
-                <p><strong>Printed:</strong> ${book.datePrinted ? formatDisplayDate(book.datePrinted) : "—"}</p>
-                <p><strong>Received:</strong> ${book.dateReceived ? formatDisplayDate(book.dateReceived) : "—"}</p>
-                <p><strong>Read:</strong> ${book.dateRead ? formatDisplayDate(book.dateRead) : "—"}</p>
+    ${book.link ? `<a href="${book.link}" target="_blank" class="book-link">View Book</a>` : ""}
 
-                <div style="
-                    max-height: 390px;
-                    overflow-y: auto;
-                    padding-right: 4px;
-                    margin: 8px 0;
-                ">
-                    <p style="white-space: pre-wrap; margin: 0;">
-                        ${book.description || "No description added."}
-                    </p>
-                </div>
+    <div class="book-buttons">
+        <button onclick="editBook(${realIndex})">Edit</button>
+        <button class="delete-btn" onclick="deleteBook(${realIndex})">Delete</button>
+        <button onclick="toggleCard(${realIndex})">More</button>
+        <button onclick="openBookFile(library[${realIndex}])">Open</button>
+    </div>
+</div>
 
-                <div class="book-buttons">
-                    <button onclick="editBook(${realIndex})">Edit</button>
-                    <button onclick="toggleCard(${realIndex})">Back</button>
-                </div>
-            </div>
+<!-- ========================= ⭐ BACK OF CARD ⭐ ========================= -->
+<div class="book-back" id="back-${realIndex}">
+
+    <p>${book.title || ""}</p>
+
+    <p><strong>Printed:</strong> ${book.datePrinted ? formatDisplayDate(book.datePrinted) : "—"}</p>
+    <p><strong>Received:</strong> ${book.dateReceived ? formatDisplayDate(book.dateReceived) : "—"}</p>
+    <p><strong>Read:</strong> ${book.dateRead ? formatDisplayDate(book.dateRead) : "—"}</p>
+
+    <div style="
+        max-height: 390px;
+        overflow-y: auto;
+        padding-right: 4px;
+        margin: 8px 0;
+    ">
+        <p style="white-space: pre-wrap; margin: 0;">
+            ${book.description || "No description added."}
+        </p>
+    </div>
+
+    <div class="book-buttons">
+        <button onclick="editBook(${realIndex})">Edit</button>
+        <button onclick="toggleCard(${realIndex})">Back</button>
+    </div>
+</div>
         `;
 
         const front = item.querySelector('.book-front');
@@ -1877,92 +2607,37 @@ function renderLibrary() {
         list.appendChild(item);
     });
 }
-/* ========================= ⭐ SCROLL-TO-TOP PHOENIX ⭐ ========================= */
-document.addEventListener("DOMContentLoaded", () => {
 
-    const btn = document.getElementById("scrollTopBtn");
-
-    window.addEventListener("scroll", function () {
-        if (window.scrollY > 300) {
-            btn.classList.add("visible");
-        } else {
-            btn.classList.remove("visible");
-        }
-    });
-
-    btn.addEventListener("click", function () {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-});
 /* ========================= ⭐ BACKUP DRAGON ⭐ ========================= */
+
 function exportLibraryJSON() {
-    const data = localStorage.getItem("library") || "[]";  // <-- FIXED KEY
+    const data = JSON.stringify(library, null, 2);
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "EmeraldFireLibraryBackup.json";
+    a.download = (currentLibraryName || "EmeraldFireLibrary") + "_Backup.json";
     a.click();
 
     URL.revokeObjectURL(url);
 }
 
 /* ========================= ⭐ AQUARIUS RESET ⭐ ========================= */
+
 function resetLibraryName() {
-    localStorage.removeItem("libraryName");
+    localStorage.removeItem("lastLibraryName");
+    // Clear in-memory state and reload to hub
+    library = [];
+    editingIndex = null;
+    currentLibraryHandle = null;
+    currentLibraryName = null;
     location.reload();
 }
-
-
 </script>
 
-<!-- ========================= ⭐ FOOTER WITH TWO ROWS ⭐ ========================= -->
+<!-- ========================= ⭐ FOOTER ⭐ ========================= -->
 
-<!-- ⭐ Row 1: Phoenix + Dragon + Aquarius ⭐ -->
-<div id="footerIcons" style="
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:60px;
-    margin-top:40px; ">
-
-
-    <!-- Scroll-to-top Phoenix -->
-    <button id="scrollTopBtn" style="background:none; border:none; padding:0;">
-        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/scrollup.png"
-             alt="Scroll to Top"
-             style="width:100px; height:100px;">
-    </button>
-
-    <!-- Backup Dragon -->
-    <button id="backupBtn" onclick="exportLibraryJSON()" style="background:none; border:none; padding:0;">
-        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/conservat.png"
-             alt="Backup Library"
-             style="width:120px; height:120px;">
-    </button>
-
- <!-- Aquarius (Reset) -->
-<button id="resetBtn" onclick="resetLibraryName()" style="background:none; border:none; padding:0;">
-    <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/resetart1.png"
-         alt="Reset"
-         style="width:120px; height:120px;">
-</button>
-
-
-</div>
-
-<!-- ⭐ Row 2: Footer Text ⭐ -->
-<div style="
-    text-align:center;
-    margin-top:30px;
-    font-size:14px;
-    color:#004400;
-    opacity:0.85;
-    text-shadow:0 0 6px #ccffcc;
-">
-    Powered by the Emerald Fire Book Vault App — v02.24.26
 </div>
 
 </body>
