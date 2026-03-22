@@ -108,80 +108,91 @@ h1 {
     font-weight: bold;
 }
 
-        /* ========================= ⭐ HUB SCREEN ⭐ ========================= */
-        .hub-screen {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: rgba(0,0,0,0.65);
-            color: #eaffea;
-            padding: 40px;
-            z-index: 9999;
-        }
+/* ========================= ⭐ HUB SCREEN ⭐ ========================= */
+.hub-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: rgba(0,0,0,0.65);
+    color: #eaffea;
+    padding: 40px;
+    z-index: 9999;
+}
 
-        .hub-panel {
-            background: rgba(0,0,0,0.75);
-            border-radius: 12px;
-            padding: 24px 28px;
-            max-width: 600px;
-            width: 100%;
-            box-shadow: 0 0 18px rgba(120,255,100,0.4);
-        }
+.hub-panel {
+    background: rgba(0,0,0,0.75);
+    border-radius: 12px;
+    padding: 24px 28px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 0 18px rgba(120,255,100,0.4);
+}
 
-        .hub-panel h2 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
+.hub-panel h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
 
-        .hub-panel button {
-            margin-top: 10px;
-        }
+.hub-panel button {
+    margin-top: 10px;
+}
 
-        #existingLibraries {
-            margin-top: 15px;
-            max-height: 220px;
-            overflow-y: auto;
-            border: 1px solid rgba(120,255,100,0.35);
-            border-radius: 8px;
-            padding: 10px;
-            background: rgba(0,0,0,0.35);
-        }
+/* OLD container (still fine to keep) */
+#existingLibraries {
+    margin-top: 15px;
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid rgba(120,255,100,0.35);
+    border-radius: 8px;
+    padding: 10px;
+    background: rgba(0,0,0,0.35);
+}
 
-        .library-choice-btn {
-            display: block;
-            width: 100%;
-            text-align: left;
-            margin-bottom: 6px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px solid rgba(120,255,100,0.35);
-            background: rgba(0,0,0,0.45);
-            color: #eaffea;
-            cursor: pointer;
-        }
+/* ⭐ NEW: Adaptive 1–2 column layout for the welcomeContent list */
+#welcomeContent {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, max-content));
+    justify-content: center;   /* keeps columns tight and centered */
+    gap: 0px;
 
-        .library-choice-btn:hover {
-            background: rgba(120,255,100,0.15);
-        }
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
 
-        .hub-input-row {
-            margin-top: 15px;
-            display: flex;
-            gap: 8px;
-        }
+.library-choice-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(120,255,100,0.35);
+    background: rgba(0,0,0,0.45);
+    color: #eaffea;
+    cursor: pointer;
+}
 
-        .hub-input-row input {
-            flex: 1;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #cfcfcf;
-        }
+.library-choice-btn:hover {
+    background: rgba(120,255,100,0.15);
+}
 
+.hub-input-row {
+    margin-top: 15px;
+    display: flex;
+    gap: 8px;
+}
 
+.hub-input-row input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #cfcfcf;
+}
         /* ========================= ⭐ ICON TAB BAR ⭐ ========================= */
         #iconTabs {
             display: flex;
@@ -1351,15 +1362,11 @@ function showMainUI() {
     const libraryTab = document.getElementById("libraryTab");
     if (libraryTab) libraryTab.style.display = "block";
 
-    // Update header with library name
-    const header = document.getElementById("libraryTitle");
-    if (header && currentLibraryName) {
-        let finalName = currentLibraryName;
-        if (!finalName.toLowerCase().includes("library")) {
-            finalName += " Library";
-        }
-        header.textContent = finalName;
-    }
+// Update header with library name
+const header = document.getElementById("libraryTitle");
+if (header && currentLibraryName) {
+    header.textContent = currentLibraryName;
+}
 
     // Initialize dropdowns + sort arrows
     populateSourceDropdown();
@@ -1917,7 +1924,7 @@ function processAmazonURL(statusId) {
         return;
     }
 
-    // Extract ASIN
+    // ⭐ Extract ASIN
     const asinMatch = raw.match(/\/([A-Z0-9]{10})(?:[/?]|$)/i);
     const asin = asinMatch ? asinMatch[1] : null;
 
@@ -1926,12 +1933,12 @@ function processAmazonURL(statusId) {
         return;
     }
 
-    // Normalize URL
+    // ⭐ Normalize URL
     const domainMatch = raw.match(/https?:\/\/(www\.)?amazon\.[a-z.]+/i);
     const domain = domainMatch ? domainMatch[0] : "https://www.amazon.com";
     const cleanURL = `${domain}/dp/${asin}`;
 
-    // Build a FULL book object matching addBook()
+    // ⭐ Build a FULL book object matching addBook()
     const book = {
         id: crypto.randomUUID(),
         title: "Unknown Title",
@@ -1953,34 +1960,57 @@ function processAmazonURL(statusId) {
         asin: asin
     };
 
-    // ⭐ Call your local Amazon scraper (Apify-style)
+    // ⭐ Call your local Amazon scraper
     fetch(`http://localhost:3000/api/amazon/${asin}`)
         .then(res => res.json())
         .then(data => {
-    if (data.title) book.title = data.title;
-    if (data.author) book.author = data.author;
-    if (data.cover) book.cover = data.cover;
-    if (data.description) book.description = data.description;
-    if (data.genre) book.genre = data.genre;   // ⭐ NEW LINE
 
-    library.push(book);
-    saveLibrary();
-    renderLibrary();
-    showTab('libraryTab');
-    status.textContent = "Amazon metadata imported!";
-})
-        .catch(err => {
-            console.error("Scraper error:", err);
+            // ⭐ Basic metadata
+            if (data.title) book.title = data.title;
+            if (data.author) book.author = data.author;
+            if (data.description) book.description = data.description;
 
-            // Fallback: still add the placeholder book
+            // ⭐ Cover (with fallback)
+            if (data.cover && data.cover.trim() !== "") {
+                book.cover = data.cover;
+            } else {
+                book.cover = "https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/repair-manual.png";
+            }
+
+            // ⭐ Genre (optional)
+            if (data.genre) book.genre = data.genre;
+
+            // ⭐ NEW: Print date
+            if (data.publicationDate) book.datePrinted = data.publicationDate;
+
+            // ⭐ NEW: Series name
+            if (data.series) book.series = data.series;
+
+            // ⭐ NEW: Series number
+            if (data.seriesNumber) book.seriesNumber = data.seriesNumber;
+
+            // ⭐ Save the completed book
             library.push(book);
             saveLibrary();
             renderLibrary();
             showTab('libraryTab');
+
+            status.textContent = "Amazon metadata imported!";
+			document.getElementById("amazonURL").value = "";   // ⭐ CLEAR FIELD
+        })
+        .catch(err => {
+            console.error("Scraper error:", err);
+
+            // ⭐ Fallback: still add the placeholder book
+            library.push(book);
+            saveLibrary();
+            renderLibrary();
+            showTab('libraryTab');
+
             status.textContent = "Amazon link added (scraper unavailable).";
+			document.getElementById("amazonURL").value = "";   // ⭐ CLEAR FIELD
         });
 }
-	
 	
 	
 /* ========================= ⭐ CSV PARSER HELPER ⭐ ========================= */
