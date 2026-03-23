@@ -1140,6 +1140,13 @@ let rootHandle = null;
 let currentLibraryHandle = null;
 let currentLibraryName = null;
 
+
+function toISO(dateString) {
+    if (!dateString) return "";
+    const d = new Date(dateString);
+    if (isNaN(d)) return "";
+    return d.toISOString().split("T")[0];
+}
 /* ========================= ⭐ FILE SYSTEM BOOKMARK HELPERS ⭐ ========================= */
 
 async function saveHandle(key, handle) {
@@ -1956,7 +1963,7 @@ function processAmazonURL(statusId) {
         source: "Amazon",
         series: "",
         seriesNumber: "",
-        dateReceived: new Date().toLocaleDateString("en-CA"),
+        dateReceived: new Date().toISOString().split("T")[0];
         dateRead: "",
         datePrinted: "",
         reviewed: "No",
@@ -1983,7 +1990,7 @@ function processAmazonURL(statusId) {
 			if (data.isbn) book.isbn = data.isbn;
 			
             // ⭐ NEW: Print date
-            if (data.publicationDate) book.datePrinted = data.publicationDate;
+            if (data.publicationDate) book.datePrinted = toISO(data.publicationDate);
 
             // ⭐ NEW: Series name
             if (data.series) book.series = data.series;
@@ -2192,9 +2199,9 @@ function addBook() {
         source: finalSource,
         series: document.getElementById('series').value,
         seriesNumber: document.getElementById('seriesNumber').value,
-        dateReceived: document.getElementById('dateReceived').value || new Date().toLocaleDateString("en-CA"),
-        dateRead: document.getElementById('dateRead').value,
-        datePrinted: document.getElementById('datePrinted').value,
+        dateReceived: toISO(document.getElementById('dateReceived').value) || toISO(new Date()),
+		dateRead: toISO(document.getElementById('dateRead').value),
+		datePrinted: toISO(document.getElementById('datePrinted').value),
         reviewed: document.getElementById('reviewed').value,
         cover: document.getElementById('cover').value,
         link: document.getElementById('link').value,
