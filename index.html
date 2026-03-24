@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -1112,7 +1113,7 @@ h1 {
     opacity:0.85;
     text-shadow:0 0 6px #ccffcc;
 ">
-    Powered by the Emerald Fire Book Vault App — v03.20.26
+    Powered by the Emerald Fire Book Vault App — v03.24.26
 </div>
 </div>
 </body>
@@ -1529,7 +1530,7 @@ async function enterLibrary(libraryHandle) {
 
     // Show the main UI
     showMainUI();
-36
+
     // Render the library now that it's loaded
     renderLibrary();
 }
@@ -1963,7 +1964,7 @@ function processAmazonURL(statusId) {
         source: "Amazon",
         series: "",
         seriesNumber: "",
-        dateReceived: new Date().toISOString().split("T")[0];
+        dateReceived: new Date().toISOString().split("T")[0],
         dateRead: "",
         datePrinted: "",
         reviewed: "No",
