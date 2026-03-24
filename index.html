@@ -1076,45 +1076,65 @@ h1 {
 <!-- ⭐ ICON FOOTER (hidden until library loads) ⭐ -->
 <div id="footerIcons" style="
     display:none;
+    flex-direction: column;
     justify-content:center;
     align-items:center;
-    gap:60px;
+    gap:20px;
     margin-top:40px;
-">
-
-    <!-- Scroll to Top -->
-    <button id="scrollTopBtn" style="background:none; border:none; padding:0;">
-        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/scrollup.png"
-             alt="Scroll to Top"
-             style="width:100px; height:100px;">
-    </button>
-
-    <!-- Backup Library -->
-    <button id="backupBtn" onclick="exportLibraryJSON()" style="background:none; border:none; padding:0;">
-        <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/conservat.png"
-             alt="Backup Library"
-             style="width:120px; height:120px;">
-    </button>
-
-<!-- Contact Me -->
-<a href="mailto:emeraldfire999@yahoo.com" 
-   id="contactBtn"
-   style="background:none; border:none; padding:0; display:inline-block;">
-    <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/resetart1.png"
-         alt="Contact Me"
-         style="width:120px; height:120px;">
-</a>
- <!-- ⭐ VERSION TEXT (visible on welcome screen) ⭐ -->
-<div id="poweredBy" style="
     text-align:center;
-    margin-top:30px;
-    font-size:14px;
-    color:#004400;
-    opacity:0.85;
-    text-shadow:0 0 6px #ccffcc;
 ">
-    Powered by the Emerald Fire Book Vault App — v03.24.26
-</div>
+
+    <!-- ⭐ ICON ROW ⭐ -->
+    <div id="footerIconRow" style="
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:60px;
+    ">
+        <!-- Scroll to Top -->
+        <button id="scrollTopBtn" style="background:none; border:none; padding:0;">
+            <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/scrollup.png"
+                 alt="Scroll to Top"
+                 style="width:100px; height:100px;">
+        </button>
+
+        <!-- Backup Library -->
+        <button id="backupBtn" onclick="exportLibraryJSON()" style="background:none; border:none; padding:0;">
+            <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/conservat.png"
+                 alt="Backup Library"
+                 style="width:120px; height:120px;">
+        </button>
+
+        <!-- Contact Me -->
+        <a href="mailto:emeraldfire999@yahoo.com"
+           id="contactBtn"
+           style="background:none; border:none; padding:0; display:inline-block;">
+            <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/resetart1.png"
+                 alt="Contact Me"
+                 style="width:120px; height:120px;">
+        </a>
+    </div>
+
+    <!-- ⭐ BOOK COUNT LINE ⭐ -->
+    <div id="bookCountLine" style="
+        font-size:14px;
+        color:#004400;
+        opacity:0.85;
+    ">
+        <!-- Filled by JS -->
+    </div>
+
+    <!-- ⭐ VERSION TEXT ⭐ -->
+    <div id="poweredBy" style="
+        text-align:center;
+        margin-top:10px;
+        font-size:14px;
+        color:#004400;
+        opacity:0.85;
+        text-shadow:0 0 6px #ccffcc;
+    ">
+        Powered by the Emerald Fire Book Vault App — v03.24.26
+    </div>
 </div>
 </body>
 	    <script>
@@ -1975,8 +1995,7 @@ function processAmazonURL(statusId) {
         timestamp: Date.now(),
         filePath: "",
 		isbn: "",
-        asin: asin
-		
+        asin: asin	
     };
 
     // ⭐ Call your local Amazon scraper
@@ -2030,7 +2049,8 @@ function processAmazonURL(statusId) {
             status.textContent = "Amazon link added (scraper unavailable).";
             document.getElementById("amazonURL").value = "";   // ⭐ CLEAR FIELD
         });
-}	
+}
+
 /* ========================= ⭐ CSV PARSER HELPER ⭐ ========================= */
 
 function parseCSVLine(line) {
@@ -2077,8 +2097,28 @@ async function importCSVFromFile() {
         return;
     }
 
-    // Normalize headers to lowercase
-    const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
+    // Normalize headers
+    const rawHeaders = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+
+    // ⭐ HEADER MAP — translates CSV headers to your internal field names
+    const headerMap = {
+        "isbn / asin (amazon id)": "isbn",
+        "link": "link",
+        "acquired date": "dateReceived",
+        "relationshipsubtype": "source",
+        "format": "format",
+        "title": "title",
+        "pages": "pages",
+        "main category": "mainCategory",
+        "sub category": "subCategory",
+        "sub-subcategory": "subSubCategory",
+        "genres": "genre",
+        "subgenres": "subgenre",
+        "series position": "seriesNumber",
+        "series": "series",
+        "(first) author": "author",
+        "all authors": "allAuthors"
+    };
 
     function getValue(rowObj, key) {
         return (rowObj[key] || "").trim();
@@ -2089,9 +2129,10 @@ async function importCSVFromFile() {
         if (row.every(cell => cell.trim() === "")) continue;
 
         const rowObj = {};
-        headers.forEach((h, idx) => {
-            if (!h) return;
-            rowObj[h] = row[idx] !== undefined ? row[idx] : "";
+
+        rawHeaders.forEach((h, idx) => {
+            const mapped = headerMap[h] || h; // ⭐ translate header
+            rowObj[mapped] = row[idx] !== undefined ? row[idx] : "";
         });
 
         const todayISO = new Date().toLocaleDateString("en-CA");
@@ -2099,26 +2140,27 @@ async function importCSVFromFile() {
         const newBook = {
             id: crypto.randomUUID(),
 
-            // Correct mappings for your new CSV
+            // ⭐ Correctly mapped fields
             title: getValue(rowObj, "title"),
             author: getValue(rowObj, "author"),
-            genre: getValue(rowObj, "genres"),
-            source: getValue(rowObj, "relationshipsubtype") || "CSV Import",
+            genre: getValue(rowObj, "genre"),
+            source: getValue(rowObj, "source") || "CSV Import",
             series: getValue(rowObj, "series"),
-            seriesNumber: getValue(rowObj, "series position"),
-            dateReceived: getValue(rowObj, "acquired date") || todayISO,
+            seriesNumber: getValue(rowObj, "seriesNumber"),
+            dateReceived: getValue(rowObj, "dateReceived") || todayISO,
 
-            // Fields no longer in CSV
+            // Not in CSV
             datePrinted: "",
             dateRead: "",
             reviewed: "No",
 
-            // Use ASIN/ISBN to fetch cover
-            cover: getValue(rowObj, "isbn / asin (amazon id)"),
+            // ⭐ Use ISBN/ASIN for cover fallback
+            cover: "",
+            isbn: getValue(rowObj, "isbn"),
 
             link: getValue(rowObj, "link"),
             status: "TBR",
-            description: "",
+            description: getValue(rowObj, "allAuthors"),
             timestamp: Date.now(),
             filePath: ""
         };
@@ -2130,7 +2172,6 @@ async function importCSVFromFile() {
     renderLibrary();
     alert("CSV import complete!");
 }
-
 /* ========================= ⭐ JSON IMPORT — VOLUMEN MEMORIAE ⭐ ========================= */
 
 async function importJSONBackup() {
@@ -2664,8 +2705,10 @@ function renderLibrary() {
 
         list.appendChild(item);
     });
-}
 
+    /* ⭐ NEW: Update footer book count ⭐ */
+    updateBookCount();
+}
 /* ========================= ⭐ BACKUP DRAGON ⭐ ========================= */
 
 function exportLibraryJSON() {
@@ -2681,10 +2724,19 @@ function exportLibraryJSON() {
     URL.revokeObjectURL(url);
 }
 
-/* ========================= ⭐ AQUARIUS RESET ⭐ ========================= */
 /* ========================= ⭐ CONTACT ME (no JS needed) ⭐ ========================= */
 // The old resetLibraryName() function has been removed because the footer button
 // now opens an email instead of resetting the library.
+
+
+/* ========================= ⭐ BOOK COUNT ⭐ ========================= */
+function updateBookCount() {
+    const el = document.getElementById("bookCountLine");
+    if (!el) return;
+
+    el.textContent = `Books in this library: ${library.length}`;
+}
+
 </script>
 
 <!-- ========================= ⭐ FOOTER ⭐ ========================= -->
