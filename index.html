@@ -1066,10 +1066,7 @@ h1 {
     <div id="inputTab" class="tab-content" style="display:none;">
         ... all your input tab code ...
     </div>
-<!-- ========================= ⭐ LIBRARY TAB ⭐ ========================= -->
-<div id="libraryTab" class="tab-content" style="display:none;">
-    <!-- Library tab content will be injected or displayed here -->
-</div>
+
 <!-- ========================= ⭐ END MAIN APP WRAPPER ⭐ ========================= -->
 
 
@@ -2613,17 +2610,20 @@ function renderLibrary() {
         "https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/repair-manual.png?raw=true";
 
     filtered.forEach((book) => {
-        const realIndex = library.findIndex(b => b.id === book.id);
+    const realIndex = library.findIndex(b => b.id === book.id);
 
-        const item = document.createElement('div');
-        item.className = 'book-card';
+    const item = document.createElement('div');
+    item.className = 'book-card';
+    item.dataset.id = book.id;   // ⭐ ADD THIS LINE
 
-        const coverToShow =
-            book.cover && !book.cover.startsWith("blob:null")
-                ? book.cover
-                : FALLBACK;
+    const coverToShow =
+        book.cover && !book.cover.startsWith("blob:null")
+            ? book.cover
+            : FALLBACK;
 
-        item.innerHTML = `
+    item.innerHTML = `
+
+
 <!-- ========================= ⭐ FRONT OF CARD ⭐ ========================= -->
 <div class="book-front active" id="front-${realIndex}">
     <img src="${coverToShow}"
