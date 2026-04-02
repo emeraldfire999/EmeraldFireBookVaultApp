@@ -464,6 +464,16 @@ h1 {
             text-decoration: underline;
         }
 
+		/* ⭐ LIMIT AUTHOR LINES TO TWO ⭐ */
+		.author {
+			display: -webkit-box;
+			-webkit-line-clamp: 2;   /* show only 2 lines */
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			text-overflow: ellipsis;
+}
+
+
         /* ⭐ GRID SPACING BETWEEN ROWS ⭐ */
         #libraryList {
             display: grid !important;
@@ -1102,14 +1112,30 @@ h1 {
                  style="width:120px; height:120px;">
         </button>
 
-        <!-- Contact Me -->
-        <a href="mailto:emeraldfire999@yahoo.com"
-           id="contactBtn"
-           style="background:none; border:none; padding:0; display:inline-block;">
-            <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/resetart1.png"
-                 alt="Contact Me"
-                 style="width:120px; height:120px;">
-        </a>
+			<!-- Contact Me -->
+			<a href="mailto:emeraldfire999@yahoo.com"
+			id="contactBtn"
+			title="Send Mail"
+			style="background:none; border:none; padding:0; display:inline-block;">
+				<img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/mailMe.png"
+					alt="Send Mail"
+					style="width:120px; height:120px;">
+			</a>
+
+		
+			<!-- Bulk Metadata Fetch -->
+			<button id="bulkFetchBtn"
+					onclick="bulkFetchMetadataForWing()"
+					title="Fetch for me but not for thee"
+					style="background:none; border:none; padding:0;">
+				<img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/fetch.png"
+					alt="Fetch for me but not for thee"
+					style="width:120px; height:120px;">
+			</button>
+
+
+
+		
     </div>
 
     <!-- ⭐ BOOK COUNT LINE ⭐ -->
@@ -1130,7 +1156,7 @@ h1 {
         opacity:0.85;
         text-shadow:0 0 6px #ccffcc;
     ">
-        Powered by the Emerald Fire Book Vault App — v03.24.26
+        Powered by the Emerald Fire Book Vault App — v04.1.26
     </div>
 </div>
 </body>
@@ -1235,6 +1261,8 @@ function fetchAmazonMetadataFromCard(index) {
 }
 
 /* ========================= ⭐ AMAZON METADATA FETCH ⭐ ========================= */
+const FALLBACK = "https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/repair-manual.png?raw=true";
+
 function fetchAmazonMetadata() {
     const url = document.getElementById('link').value.trim();
 
@@ -1277,6 +1305,75 @@ function fetchAmazonMetadata() {
             alert("Could not fetch metadata.");
         });
 }
+
+/* ========================= ⭐ FETCH METADATA FOR A BOOK OBJECT ⭐ ========================= */
+async function fetchAmazonMetadataForBook(book) {
+    if (!book.link) {
+        console.warn(`No Amazon link for "${book.title}"`);
+        return book;
+    }
+
+    const asinMatch = book.link.match(/\/([A-Z0-9]{10})(?:[/?]|$)/i);
+    if (!asinMatch) {
+        console.warn(`No ASIN found in link for "${book.title}"`);
+        return book;
+    }
+
+    const asin = asinMatch[1];
+
+    try {
+        const res = await fetch(`http://localhost:3000/api/amazon/${asin}`);
+        const data = await res.json();
+
+        if (data.title) book.title = data.title;
+        if (data.author) book.author = data.author;
+        if (data.cover) book.cover = data.cover;
+        if (data.description) book.description = data.description;
+        if (data.publicationDate) book.datePrinted = data.publicationDate;
+        if (data.series) book.series = data.series;
+        if (data.seriesNumber) book.seriesNumber = data.seriesNumber;
+
+        return book;
+
+    } catch (err) {
+        console.error(`Amazon metadata fetch failed for "${book.title}"`, err);
+        return book;
+    }
+}
+
+/* ========================= ⭐ BULK METADATA FETCH FOR WING ⭐ ========================= */
+async function bulkFetchMetadataForWing() {
+    if (!library || library.length === 0) {
+        alert("No books found in this wing.");
+        return;
+    }
+
+    const total = library.length;
+    let updated = 0;
+
+    for (let i = 0; i < total; i++) {
+        const book = library[i];
+
+        const needsCover = book.cover === FALLBACK;
+
+        const needsDescription = !book.description;
+
+        if (!needsCover && !needsDescription) continue;
+
+        console.log(`Fetching metadata for ${book.title} (${i + 1}/${total})`);
+
+        await fetchAmazonMetadataForBook(book);
+
+        updated++;
+
+        saveLibrary();
+
+        await new Promise(r => setTimeout(r, 500)); // polite delay
+    }
+
+    alert(`Metadata fetch complete. Updated ${updated} books in this wing.`);
+}
+
 
 /* ========================= ⭐ SOURCE SYSTEM — LEARNING DROPDOWN ⭐ ========================= */
 
@@ -2649,7 +2746,8 @@ function renderLibrary() {
         </h3>
     </div>
 
-    <p>${book.author || ""}</p>
+    <p class="author">${book.author || ""}</p>
+
 
     <!-- ⭐ SINGLE STATUS LINE (CLICKABLE) ⭐ -->
     <p class="status-line" onclick="openStatusChooser('${book.id}', event)">
