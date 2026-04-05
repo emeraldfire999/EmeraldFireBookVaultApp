@@ -492,12 +492,12 @@ h1 {
             max-width: 640px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 10px;
         }
 
         label {
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         input, select, textarea {
@@ -516,7 +516,7 @@ h1 {
 
         .row {
             display: flex;
-            gap: 16px;
+            gap: 10px;
             width: 100%;
         }
 
@@ -908,6 +908,23 @@ h1 {
 
                 <label for="description">Description / Review / Notes</label>
                 <textarea id="description"></textarea>
+			<div class="row">
+				<div class="half">
+					<label for="mcTargetWing">Move/Copy to Wing</label>
+					<select id="mcTargetWing">
+						<option value="">Stay in this wing</option>
+					</select>
+				</div>
+
+				<div class="small">
+					<label for="mcAction">M/C</label>
+					<select id="mcAction">
+						<option value="">--</option>
+						<option value="copy">C</option>
+						<option value="move">M</option>
+					</select>
+				</div>
+			</div>
 
                 <div class="book-buttons">
                     <button onclick="addBook()">Save</button>
@@ -1156,7 +1173,7 @@ h1 {
         opacity:0.85;
         text-shadow:0 0 6px #ccffcc;
     ">
-        Powered by the Emerald Fire Book Vault App — v04.1.26
+        Powered by the Emerald Fire Book Vault App — v04.5.26
     </div>
 </div>
 </body>
@@ -1221,6 +1238,30 @@ function openDB() {
         request.onerror = () => reject(request.error);
     });
 }
+async function populateWingDropdown() {
+    const select = document.getElementById("mcTargetWing");
+    if (!select || !efRootHandle) return;
+
+    select.innerHTML = "";
+
+    const stay = document.createElement("option");
+    stay.value = "";
+    stay.textContent = "Stay in this wing";
+    select.appendChild(stay);
+
+    for await (const entry of efRootHandle.values()) {
+        if (entry.kind === "directory" && entry.name !== currentLibraryName) {
+            const opt = document.createElement("option");
+            opt.value = entry.name;          // raw folder name
+			opt.textContent = entry.name;    // display name
+			opt.dataset.folder = entry.name; // backup exact name
+
+            select.appendChild(opt);
+        }
+    }
+}
+
+
 
 /* ========================= ⭐ RESTORE EFBOOK-LIBRARY ON LOAD ⭐ ========================= */
 
@@ -1341,38 +1382,57 @@ async function fetchAmazonMetadataForBook(book) {
     }
 }
 
-/* ========================= ⭐ BULK METADATA FETCH FOR WING ⭐ ========================= */
+/* ========================= ⭐ SAFE, RATE-LIMITED BULK METADATA FETCH ⭐ ========================= */
+
 async function bulkFetchMetadataForWing() {
     if (!library || library.length === 0) {
         alert("No books found in this wing.");
         return;
     }
 
-    const total = library.length;
-    let updated = 0;
+    const FALLBACK = "https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/repair-manual.png?raw=true";
 
-    for (let i = 0; i < total; i++) {
-        const book = library[i];
-
+    // Build a queue of books that actually need metadata
+    let fetchQueue = library.filter(book => {
         const needsCover = book.cover === FALLBACK;
-
         const needsDescription = !book.description;
+        return needsCover || needsDescription;
+    });
 
-        if (!needsCover && !needsDescription) continue;
-
-        console.log(`Fetching metadata for ${book.title} (${i + 1}/${total})`);
-
-        await fetchAmazonMetadataForBook(book);
-
-        updated++;
-
-        saveLibrary();
-
-        await new Promise(r => setTimeout(r, 500)); // polite delay
+    if (fetchQueue.length === 0) {
+        alert("All books in this wing already have metadata.");
+        return;
     }
 
-    alert(`Metadata fetch complete. Updated ${updated} books in this wing.`);
+    const total = fetchQueue.length;
+    let processed = 0;
+
+    alert(`Starting slow metadata fetch for ${total} books.\nThis may take a while — feel free to leave it running.`);
+
+    // Process ONE book at a time
+    async function processNextBook() {
+        if (fetchQueue.length === 0) {
+            clearInterval(fetchInterval);
+            alert(`Metadata fetch complete. Updated ${processed} books.`);
+            return;
+        }
+
+        const book = fetchQueue.shift();
+        console.log(`Fetching metadata for ${book.title || "(untitled)"} (${processed + 1}/${total})`);
+
+        await fetchAmazonMetadataForBook(book);
+        saveLibrary();
+
+        processed++;
+    }
+
+    // Run one book every 60 seconds (60000 ms)
+    const fetchInterval = setInterval(processNextBook, 60000);
+
+    // Start immediately instead of waiting 60 seconds for the first one
+    processNextBook();
 }
+
 
 
 /* ========================= ⭐ SOURCE SYSTEM — LEARNING DROPDOWN ⭐ ========================= */
@@ -1501,8 +1561,10 @@ if (header && currentLibraryName) {
 }
 
     // Initialize dropdowns + sort arrows
-    populateSourceDropdown();
-    updateSortArrows();
+populateSourceDropdown();
+populateWingDropdown();
+updateSortArrows();
+
 }
 
 
@@ -1631,6 +1693,8 @@ async function enterLibrary(libraryHandle) {
     // Save handle + name
     currentLibraryHandle = libraryHandle;
     currentLibraryName = libraryHandle.name;
+	await populateWingDropdown();
+
 
     // Load library.json into the actual library array
     try {
@@ -2328,9 +2392,41 @@ function returnToHub() {
     showWelcomeStep1Existing();
 }
 
-/* ========================= ⭐ ADD BOOK TO LIBRARY ⭐ ========================= */
+/* ========================= ⭐ ADD BOOK TO ANOTHER WING ⭐ ========================= */
 
-function addBook() {
+async function addBookToWing(book, wingName) {
+    if (!efRootHandle || !wingName) return;
+
+    console.log("Writing to wing:", wingName);
+
+    // Open the target wing folder
+    const wingHandle = await efRootHandle.getDirectoryHandle(wingName);
+
+    // Load or create the wing's library.json
+    let wingLibrary = [];
+    try {
+        const fileHandle = await wingHandle.getFileHandle("library.json");
+        const file = await fileHandle.getFile();
+        wingLibrary = JSON.parse(await file.text());
+    } catch {
+        wingLibrary = [];
+    }
+
+    // Copy the book (new ID so it doesn't collide)
+    const copy = { ...book, id: crypto.randomUUID(), timestamp: Date.now() };
+    wingLibrary.push(copy);
+
+    // Save updated library.json
+    const fileHandle = await wingHandle.getFileHandle("library.json", { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify(wingLibrary, null, 2));
+    await writable.close();
+}
+
+
+/* ========================= ⭐ ADD BOOK TO LIBRARY (WITH MOVE/COPY) ⭐ ========================= */
+
+async function addBook() {
     const sourceSelect = document.getElementById("sourceSelect");
     const customInput = document.getElementById("customSourceInput");
 
@@ -2339,12 +2435,13 @@ function addBook() {
             ? customInput.value.trim()
             : sourceSelect.value;
 
-    // ⭐ Force default source for NEW books
     let finalSource = sourceValue.trim();
     if (!finalSource) finalSource = "Amazon Purchase";
 
     const book = {
-        id: crypto.randomUUID(),
+        id: editingIndex !== null && library[editingIndex]
+            ? library[editingIndex].id
+            : crypto.randomUUID(),
         title: document.getElementById('title').value,
         author: document.getElementById('author').value,
         genre: document.getElementById('genre').value,
@@ -2352,8 +2449,8 @@ function addBook() {
         series: document.getElementById('series').value,
         seriesNumber: document.getElementById('seriesNumber').value,
         dateReceived: toISO(document.getElementById('dateReceived').value) || toISO(new Date()),
-		dateRead: toISO(document.getElementById('dateRead').value),
-		datePrinted: toISO(document.getElementById('datePrinted').value),
+        dateRead: toISO(document.getElementById('dateRead').value),
+        datePrinted: toISO(document.getElementById('datePrinted').value),
         reviewed: document.getElementById('reviewed').value,
         cover: document.getElementById('cover').value,
         link: document.getElementById('link').value,
@@ -2365,18 +2462,47 @@ function addBook() {
 
     saveCustomSource(finalSource);
 
+    /* ⭐ READ MOVE/COPY SETTINGS ⭐ */
+    const wingSelect = document.getElementById("mcTargetWing");
+    const mcTargetWing = wingSelect?.selectedOptions[0]?.dataset.folder || "";
+    const mcAction = document.getElementById("mcAction")?.value || "";
+
+    let keepLocal = true;
+
+    if (mcAction === "move" && mcTargetWing) {
+        keepLocal = false;
+    }
+
+    /* ⭐ APPLY EDIT OR ADD ⭐ */
     if (editingIndex !== null) {
-        library[editingIndex] = book;
+        if (keepLocal) {
+            library[editingIndex] = book;
+        } else {
+            library.splice(editingIndex, 1);
+        }
         editingIndex = null;
-    } else {
+    } else if (keepLocal) {
         library.push(book);
+    }
+
+    /* ⭐ WRITE TO TARGET WING IF NEEDED ⭐ */
+    if (mcTargetWing && (mcAction === "copy" || mcAction === "move")) {
+        await addBookToWing(book, mcTargetWing);
     }
 
     saveLibrary();
     renderLibrary();
     clearForm();
+
+    /* Reset Move/Copy UI */
+    if (wingSelect) wingSelect.value = "";
+    const mcAct = document.getElementById("mcAction");
+    if (mcAct) mcAct.value = "";
+
     showTab('libraryTab');
 }
+
+
 /* ========================= ⭐ CANCEL INPUT ⭐ ========================= */
 
 function cancelInput() {
@@ -2404,6 +2530,10 @@ function editBook(index) {
     document.getElementById('link').value = book.link || '';
     document.getElementById('status').value = book.status || 'TBR';
     document.getElementById('description').value = book.description || '';
+
+	// ⭐ Reset Move/Copy UI when editing a book ⭐
+	document.getElementById("mcTargetWing").value = "";
+	document.getElementById("mcAction").value = "";
 
     const sourceSelect = document.getElementById('sourceSelect');
     const customInput = document.getElementById('customSourceInput');
