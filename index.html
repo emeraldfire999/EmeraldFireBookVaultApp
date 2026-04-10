@@ -1063,7 +1063,7 @@ h1 {
             <button onclick="selectFiles('pdfInput')">Select PDF Files</button>
             <input type="file" id="pdfInput" accept=".pdf" multiple
                    style="display:none;" onchange="handleFileSelection(event)">
-            <button onclick="processSelectedFiles('pdfStatus')">Process Selected Files</button>
+            <button onclick="processSelectedPDFFiles('pdfStatus')">Process Selected Files</button>
         </div>
 
         <div class="importPanel" id="importAmazon" style="display:none;">
@@ -1173,7 +1173,7 @@ h1 {
         opacity:0.85;
         text-shadow:0 0 6px #ccffcc;
     ">
-        Powered by the Emerald Fire Book Vault App — v04.5.26
+        Powered by the Emerald Fire Book Vault App — v04.10.26
     </div>
 </div>
 </body>
@@ -1682,6 +1682,14 @@ async function startNewLibraryFromWelcome() {
 
     // Create the new library folder inside EFBook-Library
     const newLibHandle = await efRootHandle.getDirectoryHandle(name, { create: true });
+// Create books folder inside the new wing
+await newLibHandle.getDirectoryHandle("books", { create: true });
+
+// Create an empty library.json
+const jsonHandle = await newLibHandle.getFileHandle("library.json", { create: true });
+const writable = await jsonHandle.createWritable();
+await writable.write("[]");
+await writable.close();
 
     // Enter the new library
     enterLibrary(newLibHandle);
@@ -2423,6 +2431,38 @@ async function addBookToWing(book, wingName) {
     await writable.close();
 }
 
+/* ========================= ⭐ MOVE/COPY FILE BETWEEN WINGS ⭐ ========================= */
+
+async function moveOrCopyFile(book, action, targetWing) {
+    if (!book.filePath) return; // No file to move/copy
+
+    const filename = book.filePath.replace("books/", "");
+
+    // Source wing folder
+    const sourceWing = currentLibraryHandle;
+    const sourceBooks = await sourceWing.getDirectoryHandle("books");
+
+    // Target wing folder
+    const targetWingHandle = await efRootHandle.getDirectoryHandle(targetWing);
+    const targetBooks = await targetWingHandle.getDirectoryHandle("books");
+
+    // Open the source file
+    const sourceFileHandle = await sourceBooks.getFileHandle(filename);
+    const sourceFile = await sourceFileHandle.getFile();
+    const fileData = await sourceFile.arrayBuffer();
+
+    // Write file into target wing
+    const newFileHandle = await targetBooks.getFileHandle(filename, { create: true });
+    const writable = await newFileHandle.createWritable();
+    await writable.write(fileData);
+    await writable.close();
+
+    // If MOVE → delete original file
+    if (action === "move") {
+        await sourceBooks.removeEntry(filename);
+    }
+}
+
 
 /* ========================= ⭐ ADD BOOK TO LIBRARY (WITH MOVE/COPY) ⭐ ========================= */
 
@@ -2457,7 +2497,10 @@ async function addBook() {
         status: document.getElementById('status').value,
         description: document.getElementById('description').value,
         timestamp: Date.now(),
-        filePath: ""
+        filePath: editingIndex !== null && library[editingIndex]
+    ? library[editingIndex].filePath
+    : ""
+
     };
 
     saveCustomSource(finalSource);
@@ -2486,9 +2529,19 @@ async function addBook() {
     }
 
     /* ⭐ WRITE TO TARGET WING IF NEEDED ⭐ */
-    if (mcTargetWing && (mcAction === "copy" || mcAction === "move")) {
-        await addBookToWing(book, mcTargetWing);
-    }
+/* ⭐ MOVE/COPY FILE ⭐ */
+if (mcTargetWing && (mcAction === "copy" || mcAction === "move")) {
+
+    // Move or copy the actual file
+    await moveOrCopyFile(book, mcAction, mcTargetWing);
+
+    // Update filePath for the new wing
+    book.filePath = book.filePath; // stays "books/<filename>"
+
+    // Write the book entry into the target wing
+    await addBookToWing(book, mcTargetWing);
+}
+
 
     saveLibrary();
     renderLibrary();
