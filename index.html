@@ -1349,18 +1349,22 @@ function fetchAmazonMetadata() {
 
 /* ========================= ⭐ FETCH METADATA FOR A BOOK OBJECT ⭐ ========================= */
 async function fetchAmazonMetadataForBook(book) {
-    if (!book.link) {
-        console.warn(`No Amazon link for "${book.title}"`);
-        return book;
+    // ⭐ Prefer stored ASIN
+    let asin = book.asin;
+
+    // ⭐ Fallback: extract from link if ASIN missing
+    if (!asin && book.link) {
+        const asinMatch = book.link.match(/\/([A-Z0-9]{10})(?:[/?]|$)/i);
+        if (asinMatch) {
+            asin = asinMatch[1];
+            book.asin = asin; // ⭐ Save it permanently
+        }
     }
 
-    const asinMatch = book.link.match(/\/([A-Z0-9]{10})(?:[/?]|$)/i);
-    if (!asinMatch) {
-        console.warn(`No ASIN found in link for "${book.title}"`);
+    if (!asin) {
+        console.warn(`No ASIN available for "${book.title}"`);
         return book;
     }
-
-    const asin = asinMatch[1];
 
     try {
         const res = await fetch(`http://localhost:3000/api/amazon/${asin}`);
@@ -1701,8 +1705,7 @@ async function enterLibrary(libraryHandle) {
     // Save handle + name
     currentLibraryHandle = libraryHandle;
     currentLibraryName = libraryHandle.name;
-	await populateWingDropdown();
-
+    await populateWingDropdown();
 
     // Load library.json into the actual library array
     try {
@@ -1714,11 +1717,39 @@ async function enterLibrary(libraryHandle) {
         library = [];
     }
 
+    // ⭐ NEW: Auto‑repair missing ASINs for this wing
+    repairMissingASINsForWing();
+
     // Show the main UI
     showMainUI();
 
     // Render the library now that it's loaded
     renderLibrary();
+}
+function repairMissingASINsForWing() {
+    let changed = false;
+
+    library.forEach(book => {
+        // Skip if ASIN already exists
+        if (book.asin) return;
+
+        // Skip if no link
+        if (!book.link) return;
+
+        // Skip non-Amazon links
+        if (!book.link.includes("amazon.")) return;
+
+        // Try to extract ASIN from Amazon link
+        const asinMatch = book.link.match(/\/([A-Z0-9]{10})(?:[/?]|$)/i);
+        if (asinMatch) {
+            book.asin = asinMatch[1];
+            changed = true;
+        }
+    });
+
+    if (changed) {
+        saveLibrary();
+    }
 }
 
 /* ========================= ⭐ SAVE LIBRARY (LOCAL + DISK) ⭐ ========================= */
@@ -2783,33 +2814,51 @@ document.addEventListener('click', function(event) {
     }
 });
 
-/* ========================= ⭐ OPEN BOOK FILE IN READER (FOR LOCAL EPUB/PDF) ⭐ ========================= */
+/* ========================= ⭐ OPEN BOOK FILE (EPUB/PDF + KINDLE) ⭐ ========================= */
 
 async function openBookFile(book) {
-    if (!book.filePath || !currentLibraryHandle) {
-        if (book.link) {
-            window.open(book.link, "_blank");
-        } else {
-            alert("No local file or link is associated with this book.");
+
+    /* 1️⃣ TRY TO OPEN FROM WING LIBRARY FOLDER (EPUB/PDF) */
+    if (book.filePath && currentLibraryHandle) {
+        try {
+            const parts = book.filePath.split("/");
+            let dir = currentLibraryHandle;
+
+            for (let i = 0; i < parts.length - 1; i++) {
+                dir = await dir.getDirectoryHandle(parts[i], { create: false });
+            }
+
+            const fileHandle = await dir.getFileHandle(parts[parts.length - 1], { create: false });
+            const file = await fileHandle.getFile();
+            const url = URL.createObjectURL(file);
+            window.open(url, "_blank");
+            return;
+        } catch (e) {
+            console.warn("Not found in Wing folder, trying Kindle Cloud Reader…");
         }
+    }
+
+/* 2️⃣ OPEN KINDLE BOOK USING ELECTRON (REAL BROWSER SESSION) */
+if (book.asin) {
+    const cloudUrl =
+        `https://read.amazon.com/?asin=${book.asin}` +
+        `&_encoding=UTF8&ref=dbs_p_ebk_r00_pbcb_rnvc00`;
+
+    window.electronAPI.openExternal(cloudUrl);
+    return;
+}
+
+
+
+    /* 3️⃣ FALLBACK → AMAZON PAGE */
+    if (book.link) {
+        window.open(book.link, "_blank");
         return;
     }
 
-    try {
-        const parts = book.filePath.split("/");
-        let dir = currentLibraryHandle;
-        for (let i = 0; i < parts.length - 1; i++) {
-            dir = await dir.getDirectoryHandle(parts[i], { create: false });
-        }
-        const fileHandle = await dir.getFileHandle(parts[parts.length - 1], { create: false });
-        const file = await fileHandle.getFile();
-        const url = URL.createObjectURL(file);
-        window.open(url, "_blank");
-    } catch (e) {
-        console.error("Error opening book file:", e);
-        alert("Could not open the local file for this book.");
-    }
+    alert("No local file found and no link available.");
 }
+
 
 /* ========================= ⭐ RENDER LIBRARY — MASTER FUNCTION ⭐ ========================= */
 
@@ -2956,8 +3005,7 @@ function renderLibrary() {
         <button onclick="editBook(${realIndex})">Edit</button>
         <button class="delete-btn" onclick="deleteBook(${realIndex})">Delete</button>
         <button onclick="toggleCard(${realIndex})">More</button>
-        <button onclick="openBookFile(library[${realIndex}])">Open</button>
-    </div>
+          </div>
 </div>
 
 <!-- ========================= ⭐ BACK OF CARD ⭐ ========================= -->
@@ -2983,7 +3031,17 @@ function renderLibrary() {
     <div class="book-buttons">
         <button onclick="editBook(${realIndex})">Edit</button>
         <button onclick="toggleCard(${realIndex})">Back</button>
+        <button onclick="openBookFile(library[${realIndex}])">Open</button>
     </div>
+<div style="margin-top:12px; color:black;">Copy the link and paste into a new tab</div>
+<div style="margin-top:12px; color:black;">
+    <a href="https://read.amazon.com/?asin=${book.asin}" target="_blank">
+        https://read.amazon.com/?asin=${book.asin}
+    </a>
+</div>
+
+
+
 </div>
         `;
 
