@@ -1173,7 +1173,7 @@ h1 {
         opacity:0.85;
         text-shadow:0 0 6px #ccffcc;
     ">
-        Powered by the Emerald Fire Book Vault App — v04.10.26
+        Powered by the Emerald Fire Book Vault App — v04.15.26
     </div>
 </div>
 </body>
@@ -1328,9 +1328,17 @@ function fetchAmazonMetadata() {
             if (data.cover) document.getElementById('cover').value = data.cover;
             if (data.description) document.getElementById('description').value = data.description;
 
-            // ⭐ NEW: Correctly update form fields
-            if (data.publicationDate)
-                document.getElementById('datePrinted').value = data.publicationDate;
+            // ⭐ FIX: Convert Amazon's messy date into ISO yyyy-MM-dd
+            if (data.publicationDate) {
+                // Remove invisible Unicode characters Amazon sometimes injects
+                const cleaned = data.publicationDate.replace(/[\u200E\u200F\u202A-\u202E]/g, "").trim();
+
+                const parsed = new Date(cleaned);
+                if (!isNaN(parsed)) {
+                    document.getElementById('datePrinted').value =
+                        parsed.toISOString().split("T")[0];
+                }
+            }
 
             if (data.series)
                 document.getElementById('series').value = data.series;
@@ -1374,7 +1382,18 @@ async function fetchAmazonMetadataForBook(book) {
         if (data.author) book.author = data.author;
         if (data.cover) book.cover = data.cover;
         if (data.description) book.description = data.description;
-        if (data.publicationDate) book.datePrinted = data.publicationDate;
+
+        // ⭐ FIX: Convert Amazon's messy date into ISO yyyy-MM-dd
+        if (data.publicationDate) {
+            // Remove invisible Unicode characters Amazon sometimes injects
+            const cleaned = data.publicationDate.replace(/[\u200E\u200F\u202A-\u202E]/g, "").trim();
+
+            const parsed = new Date(cleaned);
+            if (!isNaN(parsed)) {
+                book.datePrinted = parsed.toISOString().split("T")[0];
+            }
+        }
+
         if (data.series) book.series = data.series;
         if (data.seriesNumber) book.seriesNumber = data.seriesNumber;
 
@@ -1386,7 +1405,8 @@ async function fetchAmazonMetadataForBook(book) {
     }
 }
 
-/* ========================= ⭐ SAFE, RATE-LIMITED BULK METADATA FETCH ⭐ ========================= */
+
+/* ========================= ⭐ BULK METADATA FETCH (20 AT A TIME) ⭐ ========================= */
 
 async function bulkFetchMetadataForWing() {
     if (!library || library.length === 0) {
@@ -1394,50 +1414,48 @@ async function bulkFetchMetadataForWing() {
         return;
     }
 
-    const FALLBACK = "https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/repair-manual.png?raw=true";
+    // ⭐ Only fetch books missing Description / Review / Notes
+    let fetchQueue = library
+        .filter(book =>
+            !book.description || book.description.trim() === ""
+        )
+        .slice(0, 20); // ⭐ Limit to 20 books
 
-    // Build a queue of books that actually need metadata
-    let fetchQueue = library.filter(book => {
-        const needsCover = book.cover === FALLBACK;
-        const needsDescription = !book.description;
-        return needsCover || needsDescription;
-    });
+    const total = fetchQueue.length;
 
-    if (fetchQueue.length === 0) {
-        alert("All books in this wing already have metadata.");
+    if (total === 0) {
+        alert("All books in this wing already have descriptions.");
         return;
     }
 
-    const total = fetchQueue.length;
-    let processed = 0;
+    alert(`Fetching metadata for ${total} books (20 at a time).`);
 
-    alert(`Starting slow metadata fetch for ${total} books.\nThis may take a while — feel free to leave it running.`);
+    for (let i = 0; i < fetchQueue.length; i++) {
+        const book = fetchQueue[i];
 
-    // Process ONE book at a time
-    async function processNextBook() {
-        if (fetchQueue.length === 0) {
-            clearInterval(fetchInterval);
-            alert(`Metadata fetch complete. Updated ${processed} books.`);
-            return;
+        try {
+            console.log(`Fetching metadata for: ${book.title || book.asin || "Unknown Book"}`);
+
+            // ⭐ Use your existing Amazon fetcher
+            const updated = await fetchAmazonMetadataForBook(book);
+
+            if (updated) {
+                Object.assign(book, updated);
+            }
+
+            saveLibrary();
+            renderLibrary();
+
+            // ⭐ Delay to avoid Amazon rate limits
+            await new Promise(res => setTimeout(res, 1500));
+
+        } catch (err) {
+            console.error("Error fetching metadata:", err);
         }
-
-        const book = fetchQueue.shift();
-        console.log(`Fetching metadata for ${book.title || "(untitled)"} (${processed + 1}/${total})`);
-
-        await fetchAmazonMetadataForBook(book);
-        saveLibrary();
-
-        processed++;
     }
 
-    // Run one book every 60 seconds (60000 ms)
-    const fetchInterval = setInterval(processNextBook, 60000);
-
-    // Start immediately instead of waiting 60 seconds for the first one
-    processNextBook();
+    alert("Metadata fetch complete for this batch of 20 books.");
 }
-
-
 
 /* ========================= ⭐ SOURCE SYSTEM — LEARNING DROPDOWN ⭐ ========================= */
 
@@ -3064,6 +3082,28 @@ function renderLibrary() {
     /* ⭐ NEW: Update footer book count ⭐ */
     updateBookCount();
 }
+
+/* ========================= ⭐ OPEN STATUS CHOOSER ⭐ ========================= */
+function openStatusChooser(bookId, event) {
+    event.stopPropagation();
+
+    // Close any other open chooser
+    document.querySelectorAll('.status-chooser.visible')
+        .forEach(el => el.classList.remove('visible'));
+
+    const chooser = document.getElementById(`status-chooser-${bookId}`);
+    if (!chooser) return;
+
+    // Position chooser relative to the clicked status line
+    const rect = event.target.getBoundingClientRect();
+
+    chooser.style.left = rect.left + window.scrollX + rect.width / 2 + "px";
+    chooser.style.top = rect.top + window.scrollY + "px";
+
+    chooser.classList.add('visible');
+}
+
+
 /* ========================= ⭐ BACKUP DRAGON ⭐ ========================= */
 
 function exportLibraryJSON() {
