@@ -1096,7 +1096,6 @@ h1 {
 
 <!-- ========================= ⭐ END MAIN APP WRAPPER ⭐ ========================= -->
 
-
 <!-- ⭐ ICON FOOTER (hidden until library loads) ⭐ -->
 <div id="footerIcons" style="
     display:none;
@@ -1129,40 +1128,63 @@ h1 {
                  style="width:120px; height:120px;">
         </button>
 
-			<!-- Contact Me -->
-			<a href="mailto:emeraldfire999@yahoo.com"
-			id="contactBtn"
-			title="Send Mail"
-			style="background:none; border:none; padding:0; display:inline-block;">
-				<img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/mailMe.png"
-					alt="Send Mail"
-					style="width:120px; height:120px;">
-			</a>
+        <!-- Contact Me -->
+        <a href="mailto:emeraldfire999@yahoo.com"
+           id="contactBtn"
+           title="Send Mail"
+           style="background:none; border:none; padding:0; display:inline-block;">
+            <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/mailMe.png"
+                 alt="Send Mail"
+                 style="width:120px; height:120px;">
+        </a>
 
-		
-			<!-- Bulk Metadata Fetch -->
-			<button id="bulkFetchBtn"
-					onclick="bulkFetchMetadataForWing()"
-					title="Fetch for me but not for thee"
-					style="background:none; border:none; padding:0;">
-				<img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/fetch.png"
-					alt="Fetch for me but not for thee"
-					style="width:120px; height:120px;">
-			</button>
+        <!-- Bulk Metadata Fetch -->
+        <button id="bulkFetchBtn"
+                onclick="bulkFetchMetadataForWing()"
+                title="Fetch for me but not for thee"
+                style="background:none; border:none; padding:0;">
+            <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/fetch.png"
+                 alt="Fetch for me but not for thee"
+                 style="width:120px; height:120px;">
+        </button>
 
+        <!-- Cleanup Empty Books -->
+       
+			<div class="footer-icon" onclick="openCleanupOptions()" title="Cleanup Empty Books">
+				<img src="https://github.com/emeraldfire999/EmeraldFireBookVaultApp/blob/main/your-cleanup-icon.png?raw=true"
+					alt="Cleanup" style="width:80px; height:80px;">
+			</div>
+	    </div>
 
+</div> <!-- end footerIconRow -->
+<div id="cleanupOptionsDialog" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:400px;">
+        <h2>Cleanup Options</h2>
+        <p>Choose what to delete automatically:</p>
 
-		
+        <label><input type="checkbox" id="optMissingLink"> Missing Link</label><br>
+        <label><input type="checkbox" id="optMissingTitle"> Missing Title</label><br>
+        <label><input type="checkbox" id="optMissingDescription"> Missing Description</label><br>
+        <label><input type="checkbox" id="optMissingAuthor"> Missing Author</label><br>
+        <label><input type="checkbox" id="optDuplicates"> Duplicates (keep best)</label>
+
+        <div style="margin-top:15px; text-align:right;">
+            <button onclick="closeCleanupOptions()">Cancel</button>
+            <button onclick="runCleanup()">Clean Now</button>
+        </div>
     </div>
+</div>
+
 
     <!-- ⭐ BOOK COUNT LINE ⭐ -->
     <div id="bookCountLine" style="
+        text-align:center;
+        margin-top:10px;
         font-size:14px;
         color:#004400;
         opacity:0.85;
-    ">
-        <!-- Filled by JS -->
-    </div>
+        text-shadow:0 0 6px #ccffcc;
+    "></div>
 
     <!-- ⭐ VERSION TEXT ⭐ -->
     <div id="poweredBy" style="
@@ -1173,9 +1195,11 @@ h1 {
         opacity:0.85;
         text-shadow:0 0 6px #ccffcc;
     ">
-        Powered by the Emerald Fire Book Vault App — v04.15.26
+        Powered by the Emerald Fire Book Vault App — v04.16.26
     </div>
 </div>
+
+
 </body>
 	    <script>
 		
@@ -3083,6 +3107,7 @@ function renderLibrary() {
     updateBookCount();
 }
 
+
 /* ========================= ⭐ OPEN STATUS CHOOSER ⭐ ========================= */
 function openStatusChooser(bookId, event) {
     event.stopPropagation();
@@ -3101,6 +3126,81 @@ function openStatusChooser(bookId, event) {
     chooser.style.top = rect.top + window.scrollY + "px";
 
     chooser.classList.add('visible');
+}
+
+function openCleanupOptions() {
+    document.getElementById("cleanupOptionsDialog").style.display = "block";
+}
+
+function closeCleanupOptions() {
+    document.getElementById("cleanupOptionsDialog").style.display = "none";
+}
+
+function runCleanup() {
+    const opts = {
+        missingLink: document.getElementById("optMissingLink").checked,
+        missingTitle: document.getElementById("optMissingTitle").checked,
+        missingDescription: document.getElementById("optMissingDescription").checked,
+        missingAuthor: document.getElementById("optMissingAuthor").checked,
+        duplicates: document.getElementById("optDuplicates").checked
+    };
+
+    closeCleanupOptions();
+
+    let deletedCount = 0;
+
+    // 1️⃣ Remove empties
+    for (let i = library.length - 1; i >= 0; i--) {
+        const b = library[i];
+
+        if (opts.missingLink && (!b.link || b.link.trim() === "")) {
+            library.splice(i, 1); deletedCount++; continue;
+        }
+        if (opts.missingTitle && (!b.title || b.title.trim() === "")) {
+            library.splice(i, 1); deletedCount++; continue;
+        }
+        if (opts.missingDescription && (!b.description || b.description.trim() === "")) {
+            library.splice(i, 1); deletedCount++; continue;
+        }
+        if (opts.missingAuthor && (!b.author || b.author.trim() === "")) {
+            library.splice(i, 1); deletedCount++; continue;
+        }
+    }
+
+    // 2️⃣ Handle duplicates (keep most complete)
+    if (opts.duplicates) {
+        const map = new Map();
+
+        function score(book) {
+            let s = 0;
+            ["title","author","genre","series","seriesNumber","status","reviewed","source","datePrinted","dateReceived","dateRead","cover","link","description"]
+                .forEach(f => { if (book[f] && String(book[f]).trim() !== "") s++; });
+            return s;
+        }
+
+        for (let i = library.length - 1; i >= 0; i--) {
+            const b = library[i];
+            const key = (b.title || "").trim().toLowerCase() + "|" + (b.author || "").trim().toLowerCase();
+
+            if (!map.has(key)) {
+                map.set(key, b);
+            } else {
+                const existing = map.get(key);
+                if (score(b) > score(existing)) {
+                    map.set(key, b);
+                    library.splice(library.indexOf(existing), 1);
+                } else {
+                    library.splice(i, 1);
+                }
+                deletedCount++;
+            }
+        }
+    }
+
+    saveLibrary();
+    renderLibrary();
+
+    alert(`Cleanup complete. Deleted ${deletedCount} books.`);
 }
 
 
