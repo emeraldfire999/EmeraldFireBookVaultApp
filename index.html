@@ -2704,7 +2704,7 @@ function editBook(index) {
 
     /* ⭐ Auto-fetch updated Amazon metadata when editing ⭐ */
     if (book.source === "Amazon" && book.asin) {
-        fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
+        fetch(`https://storage-for-server.onrender.com/api/amazon/${book.asin}`)
 
             .then(res => res.json())
             .then(data => {
