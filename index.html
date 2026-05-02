@@ -1312,7 +1312,8 @@ function fetchAmazonMetadataFromCard(index) {
         return;
     }
 
-    fetch(`http://localhost:3500/api/amazon/${book.asin}`)
+    fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
+
         .then(res => res.json())
         .then(data => {
             if (data.title) book.title = data.title;
@@ -1350,7 +1351,7 @@ function fetchAmazonMetadata() {
 
     const asin = asinMatch[1];
 
-    fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
+    fetch(`http://localhost:3500/api/amazon/${asin}`)
         .then(res => res.json())
         .then(data => {
             if (data.title) document.getElementById('title').value = data.title;
@@ -1405,7 +1406,8 @@ async function fetchAmazonMetadataForBook(book) {
     }
 
     try {
-        const res = await fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`);
+        const res = await fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
+;
         const data = await res.json();
 
         if (data.title) book.title = data.title;
@@ -2244,7 +2246,8 @@ function processAmazonURL(statusId) {
     };
 
     // ⭐ Call your local Amazon scraper
-    fetch(`http://localhost:3500/api/amazon/${asin}`)
+    fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
+
         .then(res => res.json())
         .then(data => {
 
@@ -2700,7 +2703,8 @@ function editBook(index) {
 
     /* ⭐ Auto-fetch updated Amazon metadata when editing ⭐ */
     if (book.source === "Amazon" && book.asin) {
-        fetch(`http://localhost:3500/api/amazon/${book.asin}`)
+        fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
+
             .then(res => res.json())
             .then(data => {
 
