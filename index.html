@@ -1351,7 +1351,8 @@ function fetchAmazonMetadata() {
 
     const asin = asinMatch[1];
 
-    fetch(`http://localhost:3500/api/amazon/${asin}`)
+    fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
+
         .then(res => res.json())
         .then(data => {
             if (data.title) document.getElementById('title').value = data.title;
