@@ -1355,7 +1355,8 @@ function fetchAmazonMetadata() {
 
         .then(res => res.json())
         .then(data => {
-            if (data.title) document.getElementById('title').value = data.title;
+console.log("SCRAPER DATA:", data);  // ⭐ ADD THIS
+			if (data.title) document.getElementById('title').value = data.title;
             if (data.author) document.getElementById('author').value = data.author;
             if (data.cover) document.getElementById('cover').value = data.cover;
             if (data.description) document.getElementById('description').value = data.description;
@@ -1407,10 +1408,9 @@ async function fetchAmazonMetadataForBook(book) {
     }
 
     try {
-        const res = await fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
-;
+        const res = await fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`);
         const data = await res.json();
-
+console.log("SCRAPER DATA:", data);  // ⭐ ADD THIS
         if (data.title) book.title = data.title;
         if (data.author) book.author = data.author;
         if (data.cover) book.cover = data.cover;
