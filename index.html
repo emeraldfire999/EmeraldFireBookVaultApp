@@ -1201,7 +1201,7 @@ h1 {
         opacity:0.85;
         text-shadow:0 0 6px #ccffcc;
     ">
-        Powered by the Emerald Fire Book Vault App — v04.16.26
+        Powered by the Emerald Fire Book Vault App — v05.02.26
     </div>
 </div>
 
@@ -2213,7 +2213,6 @@ async function processSelectedPDFFiles(statusId) {
 
 
 /* ========================= ⭐ AMAZON URL IMPORT ⭐ ========================= */
-
 function processAmazonURL(statusId) {
     const status = document.getElementById(statusId);
     const raw = (document.getElementById("amazonURL").value || "").trim();
@@ -2261,36 +2260,43 @@ function processAmazonURL(statusId) {
         description: "",
         timestamp: Date.now(),
         filePath: "",
-		isbn: "",
-        asin: asin	
+        isbn: "",
+        asin: asin
     };
 
-    // ⭐ Call your local Amazon scraper
+    // ⭐ Call your scraper
     fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
-
         .then(res => res.json())
         .then(data => {
+
+            // ⭐ Detect failed scrape (series is optional)
+            const noRealData =
+                (!data.title || data.title === null) &&
+                (!data.author || data.author === null) &&
+                (!data.description || data.description === null) &&
+                (!data.publicationDate || data.publicationDate === null);
+
+            if (noRealData) {
+                status.textContent = "⚠ Amazon did not return metadata. Please fill in the fields manually before saving.";
+                return; // ⭐ STOP — do NOT create the card yet
+            }
 
             // ⭐ Basic metadata
             if (data.title) book.title = data.title;
             if (data.author) book.author = data.author;
             if (data.description) book.description = data.description;
-			if (data.isbn) book.isbn = data.isbn;
-			
-            // ⭐ NEW: Print date
+            if (data.isbn) book.isbn = data.isbn;
+
+            // ⭐ Print date
             if (data.publicationDate) book.datePrinted = toISO(data.publicationDate);
 
-            // ⭐ NEW: Series name
+            // ⭐ Series (optional)
             if (data.series) book.series = data.series;
-
-            // ⭐ NEW: Series number
             if (data.seriesNumber) book.seriesNumber = data.seriesNumber;
 
             // ⭐ Cover (with fallback)
             if (data.cover && data.cover.trim() !== "") {
                 book.cover = data.cover;
-            } else {
-                book.cover = "https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/repair-manual.png";
             }
 
             // ⭐ Genre (optional)
@@ -2303,7 +2309,7 @@ function processAmazonURL(statusId) {
             showTab('libraryTab');
 
             status.textContent = "Amazon metadata imported!";
-            document.getElementById("amazonURL").value = "";   // ⭐ CLEAR FIELD
+            document.getElementById("amazonURL").value = "";
         })
         .catch(err => {
             console.error("Scraper error:", err);
@@ -2315,7 +2321,7 @@ function processAmazonURL(statusId) {
             showTab('libraryTab');
 
             status.textContent = "Amazon link added (scraper unavailable).";
-            document.getElementById("amazonURL").value = "";   // ⭐ CLEAR FIELD
+            document.getElementById("amazonURL").value = "";
         });
 }
 
