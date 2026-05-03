@@ -1352,20 +1352,31 @@ function fetchAmazonMetadata() {
     const asin = asinMatch[1];
 
     fetch(`https://storage-for-server.onrender.com/api/amazon/${asin}`)
-
         .then(res => res.json())
         .then(data => {
-		console.log("SCRAPER DATA:", data);  // ⭐ ADD THIS
+            console.log("SCRAPER DATA:", data);
+
+            // ⭐ Detect failed scrape (series is optional)
+            const noRealData =
+                (!data.title || data.title === null) &&
+                (!data.author || data.author === null) &&
+                (!data.description || data.description === null) &&
+                (!data.publicationDate || data.publicationDate === null);
+
+            // ⭐ If scraper failed, warn user and STOP import
+            if (noRealData) {
+                alert("⚠ Amazon did not return metadata.\n\nYou can manually fill in the fields before saving.");
+                return; // ⭐ Stop here — user fills manually
+            }
+
+            // ⭐ Normal successful scrape
             if (data.title) document.getElementById('title').value = data.title;
             if (data.author) document.getElementById('author').value = data.author;
             if (data.cover) document.getElementById('cover').value = data.cover;
             if (data.description) document.getElementById('description').value = data.description;
 
-            // ⭐ FIX: Convert Amazon's messy date into ISO yyyy-MM-dd
             if (data.publicationDate) {
-                // Remove invisible Unicode characters Amazon sometimes injects
                 const cleaned = data.publicationDate.replace(/[\u200E\u200F\u202A-\u202E]/g, "").trim();
-
                 const parsed = new Date(cleaned);
                 if (!isNaN(parsed)) {
                     document.getElementById('datePrinted').value =
@@ -1381,7 +1392,7 @@ function fetchAmazonMetadata() {
 
             updatePreviewFromForm();
             alert("Amazon metadata imported!");
-			document.getElementById('link').value = "";
+            document.getElementById('link').value = "";
         })
         .catch(err => {
             console.error("Amazon scraper error:", err);
