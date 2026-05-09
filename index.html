@@ -1291,6 +1291,38 @@ async function populateWingDropdown() {
     }
 }
 
+/* ========================= ⭐ REMOVE ALL ALERTS PAUSES ⭐ ========================= */
+function showBanner(message, type = "success") {
+    const banner = document.createElement("div");
+    banner.textContent = message;
+
+    banner.style.position = "fixed";
+    banner.style.top = "20px";
+    banner.style.left = "50%";
+    banner.style.transform = "translateX(-50%)";
+    banner.style.padding = "12px 20px";
+    banner.style.borderRadius = "6px";
+    banner.style.fontSize = "16px";
+    banner.style.color = "white";
+    banner.style.zIndex = "9999";
+    banner.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+    banner.style.opacity = "0";
+    banner.style.transition = "opacity 0.3s ease";
+
+    banner.style.background = type === "success" ? "#28a745" : "#dc3545";
+
+    document.body.appendChild(banner);
+
+    requestAnimationFrame(() => {
+        banner.style.opacity = "1";
+    });
+
+    setTimeout(() => {
+        banner.style.opacity = "0";
+        setTimeout(() => banner.remove(), 300);
+    }, 2000);
+}
+
 
 
 /* ========================= ⭐ RESTORE EFBOOK-LIBRARY ON LOAD ⭐ ========================= */
@@ -1418,14 +1450,14 @@ async function fetchAmazonMetadata() {
     const url = document.getElementById('link').value.trim();
 
     if (!url) {
-        alert("Please enter an Amazon link first.");
+        showBanner("Please enter an Amazon link first.", "error");
         return;
     }
 
     // Extract ASIN
     const asinMatch = url.match(/\/([A-Z0-9]{10})(?:[/?]|$)/i);
     if (!asinMatch) {
-        alert("No ASIN found in the link.");
+        showBanner("No ASIN found in the link.", "error");
         return;
     }
 
@@ -1433,15 +1465,20 @@ async function fetchAmazonMetadata() {
 
     try {
         const res = await fetch(`http://127.0.0.1:3000/api/amazon/${asin}`);
-        const data = await res.json();
 
+        if (!res.ok) {
+            showBanner("Could not fetch metadata.", "error");
+            return;
+        }
+
+        const data = await res.json();
         console.log("SCRAPER DATA (EDIT):", data);
 
         const noRealData =
             (!data.title && !data.author && !data.description && !data.publicationDate);
 
         if (noRealData) {
-            alert("⚠ Amazon did not return metadata.\n\nYou can manually fill in the fields before saving.");
+            showBanner("Amazon returned no metadata. You can fill fields manually.", "error");
             return;
         }
 
@@ -1475,11 +1512,11 @@ async function fetchAmazonMetadata() {
 
         updatePreviewFromForm();
 
-        alert("Amazon metadata added to this card.\n\nPress SAVE to keep changes.");
+        showBanner("Amazon metadata added to this card. Press SAVE to keep changes.", "success");
 
     } catch (err) {
         console.error("Amazon scraper error:", err);
-        alert("Could not fetch metadata.");
+        showBanner("Could not fetch metadata.", "error");
     }
 }
 
