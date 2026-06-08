@@ -942,22 +942,32 @@ h1 {
 <div id="libraryTab" class="tab-content" style="display:block;">
 
     <!-- SEARCH BAR -->
-    <div id="searchBar" style="display:none;">
-        <div id="searchRow">
-            <input id="searchInput" placeholder="Search...">
+  <div id="searchBar" style="display:none;">
+    <div id="searchRow">
+        <input id="searchInput" placeholder="Search...">
 
-            <select id="secondarySort">
-                <option value="">Secondary Sort: Title (default)</option>
-                <option value="dateReceived">Date Received</option>
-                <option value="datePrinted">Print Date</option>
-                <option value="dateRead">Date Read</option>
-                <option value="title">Title</option>
-                <option value="author">Author</option>
-                <option value="genre">Genre</option>
-                <option value="status">Status</option>
-                <option value="source">Source</option>
-            </select>
-        </div>
+        <select id="secondarySort">
+            <option value="">Secondary Sort: Title (default)</option>
+            <option value="dateReceived">Date Received</option>
+            <option value="datePrinted">Print Date</option>
+            <option value="dateRead">Date Read</option>
+            <option value="title">Title</option>
+            <option value="author">Author</option>
+            <option value="genre">Genre</option>
+            <option value="status">Status</option>
+            <option value="source">Source</option>
+        </select>
+    </div>
+
+    <!-- ⭐ NEW SEARCH OPTIONS ⭐ -->
+    <div id="searchOptions">
+        <button onclick="searchThisWing()">Search This Wing</button>
+        <button onclick="searchAllWings()">Search All Wings</button>
+    </div>
+
+    <p id="searchResult"></p>
+</div>
+
     </div>
 <!-- ========================= ⭐ SORT TAB ⭐ ========================= -->
 <!-- SORT BAR -->
@@ -1076,7 +1086,7 @@ h1 {
             <h3>Amazon Import</h3>
             <p id="amazonStatus" class="import-status"></p>
             <input type="text" id="amazonURL" placeholder="Paste Amazon book URL here">
-            <<button onclick="fetchAmazonMetadataFromImport()">Process Amazon URL</button>
+            <button onclick="fetchAmazonMetadataFromImport()">Process Amazon URL</button>
         </div>
 
         <div id="importCSV" class="importPanel" style="display:none;">
@@ -3423,6 +3433,66 @@ function updateBookCount() {
 
     el.textContent = `Books in this library: ${library.length}`;
 }
+/* ========================= ⭐ SEARCH FUNCTIONS ⭐ ========================= */
+
+function searchThisWing() {
+    const title = document.getElementById("searchInput").value.toLowerCase().trim();
+
+    const result = library.find(b =>
+        b.title && b.title.toLowerCase() === title
+    );
+
+    document.getElementById("searchResult").textContent =
+        result ? "Found in this wing." : "Not in this wing.";
+}
+
+async function searchAllWings() {
+    const title = document.getElementById("searchInput").value;
+    const result = await findBookAcrossWings(title);
+
+    document.getElementById("searchResult").textContent =
+        result ? `Found in: ${result}` : "Not found in any wing.";
+}
+
+async function findBookAcrossWings(titleToFind) {
+    const wings = [
+        "Front Desk",
+        "The Dragon Book Eyier - ARC Wing",
+        "The Dragon Book Eyier - Bookfunnel Wing - hotmail",
+        "The Dragon Book Eyier - Bookfunnel Wing - yahoo",
+        "The Dragon Book Eyier - Comics & Graphic Novels Wing",
+        "The Dragon Book Eyier - Cookbooks Wing",
+        "The Dragon Book Eyier - Crafts, Hobbies & Home Wing",
+        "The Dragon Book Eyier - Literature & Fiction Wing",
+        "The Dragon Book Eyier - Mystery, Thriller & Suspense Wing",
+        "The Dragon Book Eyier - Paranormal & Fantasy Wing",
+        "The Dragon Book Eyier - Romance - Contemporary and Erotic Wing",
+        "The Dragon Book Eyier - Romance - Paranormal Wing",
+        "The Dragon Book Eyier - Romance - Sweet Wing",
+        "The Dragon Book Eyier - Science Fiction Wing",
+        "The Dragon Book Eyier - Teen & Young Adult Wing"
+    ];
+
+    titleToFind = titleToFind.toLowerCase().trim();
+
+    for (const wing of wings) {
+        try {
+            const res = await fetch(`${wing}/library.json`);
+            const data = await res.json();
+
+            for (const book of data.books) {
+                if (book.title && book.title.toLowerCase() === titleToFind) {
+                    return wing;
+                }
+            }
+        } catch (err) {
+            console.warn(`Could not read ${wing}/library.json`);
+        }
+    }
+
+    return null;
+}
+
 
 </script>
 
