@@ -3460,31 +3460,39 @@ async function searchAllWings() {
 }
 
 
-/* ⭐ Cross-wing fuzzy search (reads each wing’s library.json) */
+/* ⭐ Cross-wing fuzzy title search (reads each wing’s Library.json) */
 async function findBookAcrossWings(titleToFind) {
     if (!currentLibraryHandle) return null;
 
-    titleToFind = titleToFind.toLowerCase().trim();
+    titleToFind = titleToFind.toLowerCase().trim().normalize("NFKD");
 
     for await (const entry of currentLibraryHandle.values()) {
 
         if (entry.kind !== "directory") continue;
         if (entry.name === "books") continue;
 
+        // Try both filename cases
+        let fileHandle = null;
+        for (const name of ["Library.json", "library.json"]) {
+            try {
+                fileHandle = await entry.getFileHandle(name);
+                break;
+            } catch {}
+        }
+        if (!fileHandle) continue;
+
         try {
-            const fileHandle = await entry.getFileHandle("library.json");
             const file = await fileHandle.getFile();
             const text = await file.text();
             const data = JSON.parse(text || "[]");
 
-            // Handle both formats: array OR { books: [...] }
             const booksArray = Array.isArray(data) ? data : data.books;
-
             if (!Array.isArray(booksArray)) continue;
 
             for (const book of booksArray) {
-                if (book.title && book.title.toLowerCase().includes(titleToFind)) {
-                    return entry.name; // FOUND IT (fuzzy match)
+                if (book.title &&
+                    book.title.toLowerCase().normalize("NFKD").includes(titleToFind)) {
+                    return entry.name; // FOUND IT
                 }
             }
 
@@ -3495,11 +3503,13 @@ async function findBookAcrossWings(titleToFind) {
 
     return null;
 }
+
+
 /* ⭐ Library-wide fuzzy author search */
 async function searchAuthorAcrossWings(authorToFind) {
     if (!currentLibraryHandle) return [];
 
-    authorToFind = authorToFind.toLowerCase().trim();
+    authorToFind = authorToFind.toLowerCase().trim().normalize("NFKD");
     const results = {}; // wingName → [book titles]
 
     for await (const entry of currentLibraryHandle.values()) {
@@ -3507,8 +3517,17 @@ async function searchAuthorAcrossWings(authorToFind) {
         if (entry.kind !== "directory") continue;
         if (entry.name === "books") continue;
 
+        // Try both filename cases
+        let fileHandle = null;
+        for (const name of ["Library.json", "library.json"]) {
+            try {
+                fileHandle = await entry.getFileHandle(name);
+                break;
+            } catch {}
+        }
+        if (!fileHandle) continue;
+
         try {
-            const fileHandle = await entry.getFileHandle("library.json");
             const file = await fileHandle.getFile();
             const text = await file.text();
             const data = JSON.parse(text || "[]");
@@ -3519,11 +3538,10 @@ async function searchAuthorAcrossWings(authorToFind) {
             for (const book of booksArray) {
                 if (!book.author) continue;
 
-                // Split semicolon-separated authors
-                const authors = book.author.toLowerCase().split(";").map(a => a.trim());
+                const authorField = book.author.toLowerCase().normalize("NFKD");
 
-                // Fuzzy match ANY author in the list
-                if (authors.some(a => a.includes(authorToFind))) {
+                // Fuzzy match ANY part of the author string
+                if (authorField.includes(authorToFind)) {
                     if (!results[entry.name]) results[entry.name] = [];
                     results[entry.name].push(book.title);
                 }
@@ -3534,8 +3552,11 @@ async function searchAuthorAcrossWings(authorToFind) {
         }
     }
 
-    return results; // { wingName: [titles] }
+    return results;
 }
+
+
+/* ⭐ Display author search results */
 function displayAuthorResults(results, authorName) {
     const output = document.getElementById("searchResult");
 
@@ -3556,6 +3577,9 @@ function displayAuthorResults(results, authorName) {
 
     output.textContent = text;
 }
+
+
+/* ⭐ Trigger author search */
 async function searchAuthor() {
     const author = document.getElementById("searchInput").value.trim();
     const results = await searchAuthorAcrossWings(author);
