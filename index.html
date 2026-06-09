@@ -3451,7 +3451,7 @@ function searchThisWing() {
 }
 
 
-/* ⭐ Search all wings in the current library */
+/* ⭐ Search all wings in the EFBook-Library root ⭐ */
 async function searchAllWings() {
     const title = document.getElementById("searchInput").value.trim();
     const result = await findBookAcrossWings(title);
@@ -3461,22 +3461,22 @@ async function searchAllWings() {
 }
 
 
-/* ⭐ Cross-wing fuzzy title search (reads each wing’s Library.json) */
+/* ⭐ Cross-wing fuzzy title search (reads each wing’s library.json) */
 async function findBookAcrossWings(titleToFind) {
-    if (!currentLibraryHandle) return null;
+    if (!efRootHandle) return null;
 
     titleToFind = titleToFind.toLowerCase().trim().normalize("NFKD");
 
-    for await (const entry of currentLibraryHandle.values()) {
+    for await (const wing of efRootHandle.values()) {
 
-        if (entry.kind !== "directory") continue;
-        if (entry.name === "books") continue;
+        if (wing.kind !== "directory") continue;
+        if (wing.name === "books") continue; // skip root-level books folder if present
 
         // Try both filename cases
         let fileHandle = null;
-        for (const name of ["Library.json", "library.json"]) {
+        for (const name of ["library.json", "Library.json"]) {
             try {
-                fileHandle = await entry.getFileHandle(name);
+                fileHandle = await wing.getFileHandle(name);
                 break;
             } catch {}
         }
@@ -3485,20 +3485,17 @@ async function findBookAcrossWings(titleToFind) {
         try {
             const file = await fileHandle.getFile();
             const text = await file.text();
-            const data = JSON.parse(text || "[]");
+            const books = JSON.parse(text || "[]");
 
-            const booksArray = Array.isArray(data) ? data : data.books;
-            if (!Array.isArray(booksArray)) continue;
-
-            for (const book of booksArray) {
+            for (const book of books) {
                 if (book.title &&
                     book.title.toLowerCase().normalize("NFKD").includes(titleToFind)) {
-                    return entry.name; // FOUND IT
+                    return wing.name; // FOUND IT
                 }
             }
 
         } catch (err) {
-            console.warn("Could not read", entry.name);
+            console.warn("Could not read", wing.name);
         }
     }
 
@@ -3506,23 +3503,23 @@ async function findBookAcrossWings(titleToFind) {
 }
 
 
-/* ⭐ Library-wide fuzzy author search */
+/* ⭐ Library-wide fuzzy author search ⭐ */
 async function searchAuthorAcrossWings(authorToFind) {
-    if (!currentLibraryHandle) return [];
+    if (!efRootHandle) return {};
 
     authorToFind = authorToFind.toLowerCase().trim().normalize("NFKD");
     const results = {}; // wingName → [book titles]
 
-    for await (const entry of currentLibraryHandle.values()) {
+    for await (const wing of efRootHandle.values()) {
 
-        if (entry.kind !== "directory") continue;
-        if (entry.name === "books") continue;
+        if (wing.kind !== "directory") continue;
+        if (wing.name === "books") continue;
 
         // Try both filename cases
         let fileHandle = null;
-        for (const name of ["Library.json", "library.json"]) {
+        for (const name of ["library.json", "Library.json"]) {
             try {
-                fileHandle = await entry.getFileHandle(name);
+                fileHandle = await wing.getFileHandle(name);
                 break;
             } catch {}
         }
@@ -3531,25 +3528,21 @@ async function searchAuthorAcrossWings(authorToFind) {
         try {
             const file = await fileHandle.getFile();
             const text = await file.text();
-            const data = JSON.parse(text || "[]");
+            const books = JSON.parse(text || "[]");
 
-            const booksArray = Array.isArray(data) ? data : data.books;
-            if (!Array.isArray(booksArray)) continue;
-
-            for (const book of booksArray) {
+            for (const book of books) {
                 if (!book.author) continue;
 
                 const authorField = book.author.toLowerCase().normalize("NFKD");
 
-                // Fuzzy match ANY part of the author string
                 if (authorField.includes(authorToFind)) {
-                    if (!results[entry.name]) results[entry.name] = [];
-                    results[entry.name].push(book.title);
+                    if (!results[wing.name]) results[wing.name] = [];
+                    results[wing.name].push(book.title);
                 }
             }
 
         } catch (err) {
-            console.warn("Could not read", entry.name);
+            console.warn("Could not read", wing.name);
         }
     }
 
@@ -3557,7 +3550,7 @@ async function searchAuthorAcrossWings(authorToFind) {
 }
 
 
-/* ⭐ Display author search results */
+/* ⭐ Display author search results ⭐ */
 function displayAuthorResults(results, authorName) {
     const output = document.getElementById("searchResult");
 
@@ -3580,7 +3573,7 @@ function displayAuthorResults(results, authorName) {
 }
 
 
-/* ⭐ Trigger author search */
+/* ⭐ Trigger author search ⭐ */
 async function searchAuthor() {
     const author = document.getElementById("searchInput").value.trim();
     const results = await searchAuthorAcrossWings(author);
