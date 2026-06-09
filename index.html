@@ -3436,6 +3436,7 @@ function updateBookCount() {
 
     el.textContent = `Books in this library: ${library.length}`;
 }
+
 /* ========================= ⭐ SEARCH FUNCTIONS (FUZZY) ⭐ ========================= */
 
 /* ⭐ Search only the current wing (uses the already-loaded `library` array) */
@@ -3446,31 +3447,60 @@ function searchThisWing() {
         book.title && book.title.toLowerCase().includes(title)
     );
 
-    document.getElementById("searchResult").textContent =
-        result ? "Found in this wing." : "Not in this wing.";
+    const output = document.getElementById("searchResult");
+    output.style.whiteSpace = "pre-wrap";
+
+    output.textContent = result
+        ? "Found in this wing."
+        : "Not in this wing.";
 }
 
 
 /* ⭐ Search all wings in the EFBook-Library root ⭐ */
 async function searchAllWings() {
     const title = document.getElementById("searchInput").value.trim();
-    const result = await findBookAcrossWings(title);
+    const results = await findBookAcrossWings(title);
 
-    document.getElementById("searchResult").textContent =
-        result ? `Found in: ${result}` : "Not found in any wing.";
+    const output = document.getElementById("searchResult");
+    output.style.whiteSpace = "pre-wrap";
+
+    if (!results || Object.keys(results).length === 0) {
+        output.textContent = "Not found in any wing.";
+        return;
+    }
+
+    let text = `Matches for "${title}" found in:\n\n`;
+
+    for (const wing in results) {
+        text += `• ${wing}\n`;
+        for (const bookTitle of results[wing]) {
+            text += `   ${bookTitle}\n`;
+        }
+        text += `\n`;
+    }
+
+    output.textContent = text;
 }
 
 
 /* ⭐ Cross-wing fuzzy title search (reads each wing’s library.json) */
 async function findBookAcrossWings(titleToFind) {
-    if (!efRootHandle) return null;
+    const output = document.getElementById("searchResult");
+    output.style.whiteSpace = "pre-wrap";
+
+    if (!efRootHandle) {
+        output.textContent = "Root folder not selected.";
+        return null;
+    }
 
     titleToFind = titleToFind.toLowerCase().trim().normalize("NFKD");
+
+    const results = {}; // wingName → [titles]
 
     for await (const wing of efRootHandle.values()) {
 
         if (wing.kind !== "directory") continue;
-        if (wing.name === "books") continue; // skip root-level books folder if present
+        if (wing.name === "books") continue;
 
         // Try both filename cases
         let fileHandle = null;
@@ -3490,7 +3520,9 @@ async function findBookAcrossWings(titleToFind) {
             for (const book of books) {
                 if (book.title &&
                     book.title.toLowerCase().normalize("NFKD").includes(titleToFind)) {
-                    return wing.name; // FOUND IT
+
+                    if (!results[wing.name]) results[wing.name] = [];
+                    results[wing.name].push(book.title);
                 }
             }
 
@@ -3499,12 +3531,15 @@ async function findBookAcrossWings(titleToFind) {
         }
     }
 
-    return null;
+    return results;
 }
 
 
 /* ⭐ Library-wide fuzzy author search ⭐ */
 async function searchAuthorAcrossWings(authorToFind) {
+    const output = document.getElementById("searchResult");
+    output.style.whiteSpace = "pre-wrap";
+
     if (!efRootHandle) return {};
 
     authorToFind = authorToFind.toLowerCase().trim().normalize("NFKD");
@@ -3553,6 +3588,7 @@ async function searchAuthorAcrossWings(authorToFind) {
 /* ⭐ Display author search results ⭐ */
 function displayAuthorResults(results, authorName) {
     const output = document.getElementById("searchResult");
+    output.style.whiteSpace = "pre-wrap";
 
     if (!results || Object.keys(results).length === 0) {
         output.textContent = `No books found for author: ${authorName}`;
@@ -3564,9 +3600,9 @@ function displayAuthorResults(results, authorName) {
     for (const wing in results) {
         text += `• ${wing}\n`;
         for (const title of results[wing]) {
-            text += `   - ${title}\n`;
+            text += `   ${title}\n`;
         }
-        text += "\n";
+        text += `\n`;
     }
 
     output.textContent = text;
