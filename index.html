@@ -2951,6 +2951,13 @@ function editBook(index) {
             .catch(err => console.error("Amazon scraper error:", err));
     }
 }
+/*======================= go down=============== */
+function scrollToBottom() {
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth"
+    });
+}
 
 
 /* ========================= ⭐ CLEAR INPUT FORM ⭐ ========================= */
