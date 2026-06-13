@@ -814,6 +814,13 @@ h1 {
             <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/import.png" alt="Import">
             <span class="icon-tooltip">Import</span>
         </div>
+		
+		<div class="icon-button" onclick="scrollToBottom()">
+    <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/Draco_Descendo.png" alt="Descend">
+    <span class="icon-tooltip">Descend</span>
+</div>
+
+		
 		<!-- ⭐ LIBRARY SWITCHER DRAGON ⭐ -->
 			<div class="icon-button" onclick="returnToHub()">
 				<img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/libraryDragon.png" alt="Return to Hub">
@@ -1025,10 +1032,11 @@ h1 {
     </div>
 	
 <div class="icon-button" data-sort="description" onclick="toggleSort('description')">
-    <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/description.png" alt="Description">
+    <img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/DRACO_DESCRIPTIO.png" alt="Description">
     <span class="sort-arrow" id="arrow-description"></span>
     <span class="icon-tooltip">Description</span>
 </div>
+
 
 </div>
 
@@ -1214,7 +1222,7 @@ h1 {
         opacity:0.85;
         text-shadow:0 0 6px #ccffcc;
     ">
-        Powered by the Emerald Fire Book Vault App — v06.08.26
+        Powered by the Emerald Fire Book Vault App — v06.13.26
     </div>
 </div>
 
@@ -1593,17 +1601,6 @@ async function bulkFetchMetadataForWing() {
     const output = document.getElementById("searchResult");
     output.style.whiteSpace = "pre-wrap";
 
-    const counter = document.getElementById("bulkCounter");
-
-    // ⭐ Make counter visible immediately when button is clicked
-    if (counter) {
-        counter.style.display = "block";
-        counter.textContent = "0 / 20";
-
-        // ⭐ Force browser to repaint NOW
-        counter.offsetHeight;
-    }
-
     if (!library || library.length === 0) {
         output.textContent = "No books found in this wing.";
         return;
@@ -1612,10 +1609,10 @@ async function bulkFetchMetadataForWing() {
     // ⭐ Only fetch books missing Description / Review / Notes AND with a valid link
     let fetchQueue = library
         .filter(book =>
-            (!book.description || book.description.trim() === "") &&
-            book.link &&
+            (!book.description || book.description.trim() === "") &&   // Missing metadata
+            book.link &&                                               // Has a link
             book.link.trim() !== "" &&
-            !book.link.toLowerCase().includes("unavailable")
+            !book.link.toLowerCase().includes("unavailable")           // Skip "Unavailable" links
         )
         .slice(0, 20);  // ⭐ Limit to 20 books
 
@@ -1629,12 +1626,6 @@ async function bulkFetchMetadataForWing() {
     output.textContent = `Fetching metadata for ${total} books...\nThis may take several minutes.\n\n`;
 
     for (let i = 0; i < fetchQueue.length; i++) {
-
-        // ⭐ Update counter every loop
-        if (counter) {
-            counter.textContent = `${i + 1} / ${total}`;
-        }
-
         const book = fetchQueue[i];
         const title = book.title || book.asin || "Unknown Book";
 
@@ -1696,11 +1687,6 @@ async function bulkFetchMetadataForWing() {
     output.textContent =
         `Metadata fetch complete for this batch of ${total} books.\n` +
         `All updates saved.`;
-
-    // ⭐ Final counter update
-    if (counter) {
-        counter.textContent = `Done (${total})`;
-    }
 }
 
 /* ========================= ⭐ SOURCE SYSTEM — LEARNING DROPDOWN ⭐ ========================= */
