@@ -820,7 +820,7 @@ h1 {
         </div>
 		
 		<div class="icon-button" onclick="scrollToBottom()">
-			<img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/Draco_Descendo.png" alt="Descend">
+			<img src="https://raw.githubusercontent.com/emeraldfire999/EmeraldFireBookVaultApp/main/Draco_Descendo.png" alt="Descend" style="width:250px; height:250px;" >
 			<span class="icon-tooltip">Descend</span>
 		</div>
 
@@ -972,7 +972,7 @@ h1 {
 
     <!-- ⭐ NEW SEARCH OPTIONS ⭐ -->
     <div id="searchOptions">
-<button type="button" onclick="searchThisWing()">Search This Wing</button>
+<button type="button" onclick="searchAllGenre()">Search All Genre</button>
 <button type="button" onclick="searchAllWings()">Search All Wings</button>
 <button type="button" onclick="searchAuthor()">Search Author</button>
 
@@ -1226,7 +1226,7 @@ h1 {
         opacity:0.85;
         text-shadow:0 0 6px #ccffcc;
     ">
-        Powered by the Emerald Fire Book Vault App — v06.13.26
+        Powered by the Emerald Fire Book Vault App — v07.11.26
     </div>
 </div>
 
@@ -3487,22 +3487,84 @@ function updateBookCount() {
 }
 
 /* ========================= ⭐ SEARCH FUNCTIONS (FUZZY) ⭐ ========================= */
-
-/* ⭐ Search only the current wing (uses the already-loaded `library` array) */
-function searchThisWing() {
-    const title = document.getElementById("searchInput").value.toLowerCase().trim();
-
-    const result = library.find(book =>
-        book.title && book.title.toLowerCase().includes(title)
-    );
-
+/* ⭐ Cross-wing fuzzy GENRE search ⭐ */
+async function searchGenreAcrossWings(genreToFind) {
     const output = document.getElementById("searchResult");
     output.style.whiteSpace = "pre-wrap";
 
-    output.textContent = result
-        ? "Found in this wing."
-        : "Not in this wing.";
+    if (!efRootHandle) return {};
+
+    genreToFind = genreToFind.toLowerCase().trim().normalize("NFKD");
+    const results = {}; // wingName → [book titles]
+
+    for await (const wing of efRootHandle.values()) {
+
+        if (wing.kind !== "directory") continue;
+        if (wing.name === "books") continue;
+
+        // Try both filename cases
+        let fileHandle = null;
+        for (const name of ["library.json", "Library.json"]) {
+            try {
+                fileHandle = await wing.getFileHandle(name);
+                break;
+            } catch {}
+        }
+        if (!fileHandle) continue;
+
+        try {
+            const file = await fileHandle.getFile();
+            const text = await file.text();
+            const books = JSON.parse(text || "[]");
+
+            for (const book of books) {
+                if (!book.genre) continue;
+
+                const genreField = book.genre.toLowerCase().normalize("NFKD");
+
+                if (genreField.includes(genreToFind)) {
+                    if (!results[wing.name]) results[wing.name] = [];
+                    results[wing.name].push(book.title);
+                }
+            }
+
+        } catch (err) {
+            console.warn("Could not read", wing.name);
+        }
+    }
+
+    return results;
 }
+/* ⭐ Display genre search results ⭐ */
+function displayGenreResults(results, genreName) {
+    const output = document.getElementById("searchResult");
+    output.style.whiteSpace = "pre-wrap";
+
+    if (!results || Object.keys(results).length === 0) {
+        output.textContent = `No books found for genre: ${genreName}`;
+        return;
+    }
+
+    let text = `Genre "${genreName}" found in:\n\n`;
+
+    for (const wing in results) {
+        text += `• ${wing}\n`;
+        for (const title of results[wing]) {
+            text += `   ${title}\n`;
+        }
+        text += `\n`;
+    }
+
+    output.textContent = text;
+}
+/* ⭐ Trigger genre search ⭐ */
+async function searchAllGenre() {
+    const genre = document.getElementById("genre").value.trim();
+    const results = await searchGenreAcrossWings(genre);
+    displayGenreResults(results, genre);
+}
+
+
 
 
 /* ⭐ Search all wings in the EFBook-Library root ⭐ */
