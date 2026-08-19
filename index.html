@@ -256,7 +256,10 @@ h1 {
             visibility: visible;
             opacity: 1;
         }
-
+		.icon-button:descendo img {
+			width: 250px;
+            height: 250px;
+}
 
         /* ========================= ⭐ TAB CONTENT AREA ⭐ ========================= */
         .tab-content {
@@ -762,6 +765,34 @@ h1 {
             background: rgba(0, 0, 0, 0.25);
             color: #eaffea;
         }
+		
+	        /* ========================= ⭐ Pop-Up page ⭐ ========================= */	
+		
+		.info-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.info-popup-content {
+    background: #e8ffe8;
+    border: 2px solid #2a7f2a;
+    padding: 20px;
+    width: 450px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #1a5f1a;
+}
+
+		
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -970,8 +1001,9 @@ h1 {
     <!-- ⭐ NEW SEARCH OPTIONS ⭐ -->
     <div id="searchOptions">
 <button type="button" onclick="searchAllGenre()">Search All Genre</button>
-<button type="button" onclick="searchAllWings()">Search All Wings</button>
+<button type="button" onclick="searchAllWings()">Search All Titles</button>
 <button type="button" onclick="searchAuthor()">Search Author</button>
+<button type="button" onclick="printFuzzyResults()">Print Results</button>
 
 
     </div>
@@ -1223,7 +1255,7 @@ h1 {
         opacity:0.85;
         text-shadow:0 0 6px #ccffcc;
     ">
-        Powered by the Emerald Fire Book Vault App — v07.11.26
+        Powered by the Emerald Fire Book Vault App — v08.18.26
     </div>
 </div>
 
@@ -1438,7 +1470,7 @@ async function fetchAmazonMetadataFromImport() {
 
         if (data.series) document.getElementById('series').value = data.series;
         if (data.seriesNumber) document.getElementById('seriesNumber').value = data.seriesNumber;
-
+        if (data.url) document.getElementById('amazonURL').value = data.url;
         updatePreviewFromForm();
 
         /* ⭐ CREATE NEW CARD ⭐ */
@@ -1832,17 +1864,24 @@ function showWelcomeStep0() {
     document.getElementById("welcomeMessage").textContent =
         "First, create a folder named EFBook-Library inside your Documents folder. Then click the button below to select it.";
 
-    // Updated button text
+    // Updated button area with BOTH buttons
     document.getElementById("welcomeContent").innerHTML = `
         <button id="chooseFolderBtn" class="welcome-button">
             Select EFBook-Library Folder
+        </button>
+
+        <button id="infoBtn" class="welcome-button" style="margin-top: 15px;">
+            What is the Emerald Fire Book Vault?
         </button>
     `;
 
     document.getElementById("welcomeButton").style.display = "none";
 
+    // Button actions
     document.getElementById("chooseFolderBtn").onclick = chooseEFRoot;
+    document.getElementById("infoBtn").onclick = showInfoPopup;
 }
+
 
 async function chooseEFRoot() {
     try {
@@ -1870,6 +1909,64 @@ async function chooseEFRoot() {
     }
 }
 
+// ========================= ⭐ STEP 0 — Pop-Up Information page ⭐ =========================
+
+function showInfoPopup() {
+    const popup = document.createElement("div");
+    popup.className = "info-popup";
+
+    popup.innerHTML = `
+        <div class="info-popup-content">
+            <h2>Welcome to the Emerald Fire Book Vault</h2>
+
+<p>The Emerald Fire Book Vault is your personal digital library system. 
+It organizes your books into themed Wings, each acting like a curated bookshelf.</p>
+
+<p><strong>Wing Capacity Notice:</strong> Each Wing supports 
+<strong>up to 3000 books</strong>. Staying under this limit ensures fast loading, 
+smooth searching, and stable performance.</p>
+
+<p><strong>Auto-Fill Information:</strong> The JS Grabber can only auto-fill 
+books that have an <strong>Amazon listing</strong>. Books without an Amazon page 
+must be entered manually.</p>
+
+<h3>JS Grabber — Required for Auto-Fill</h3>
+
+<p>The JS Grabber is a small helper program that allows the Vault to fetch 
+book information from Amazon. New users must:</p>
+
+<ul>
+    <li><strong>Download</strong> the JS Grabber file</li>
+    <li><strong>Save it locally</strong> anywhere on their computer</li>
+    <li><strong>Run it with Node.js</strong> (example: <code>node grabber</code>)</li>
+</ul>
+
+<p><strong>Important:</strong> The JS Grabber cannot run directly from GitHub. 
+GitHub only stores the file — it does not execute it. You must download it and 
+run it on your own computer for auto-fill to work.</p>
+
+<p>You can download the JS Grabber here:</p>
+
+<p>
+    <a href="https://raw.githubusercontent.com/emeraldfire999/JS-Grabber/main/grabber"
+       id="downloadJSLink"
+       target="_blank">
+       Download JS Grabber
+    </a>
+</p>
+
+<p>If you did not download the JS Grabber during setup, save this link somewhere 
+safe (such as in a note or email) so you can access it later.</p>
+
+<button id="closeInfoBtn" class="welcome-button">Close</button>
+
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    document.getElementById("closeInfoBtn").onclick = () => popup.remove();
+}
 
 // ========================= ⭐ STEP 1A — Existing Libraries ⭐ =========================
 
@@ -2782,7 +2879,7 @@ async function addBook() {
         datePrinted: toISO(document.getElementById('datePrinted').value),
         reviewed: document.getElementById('reviewed').value,
         cover: document.getElementById('cover').value,
-        link: document.getElementById('link').value,
+        link: document.getElementById('amazonURL').value,
         status: document.getElementById('status').value,
         description: document.getElementById('description').value,
         timestamp: Date.now(),
@@ -2874,7 +2971,7 @@ function editBook(index) {
         document.getElementById('cover').value = book.cover;
     }
 
-    document.getElementById('link').value = book.link || '';
+    document.getElementById('amazonURL').value = book.link || '';
     document.getElementById('status').value = book.status || 'TBR';
     document.getElementById('description').value = book.description || '';
 
@@ -3723,6 +3820,43 @@ async function searchAuthor() {
     const results = await searchAuthorAcrossWings(author);
     displayAuthorResults(results, author);
 }
+
+/* ⭐ PRINT FUZZY SEARCH RESULTS ⭐ */
+function printFuzzyResults() {
+    const output = document.getElementById("searchResult");
+    if (!output) return;
+
+    const content = output.textContent || output.innerText;
+
+    const html = `
+        <html>
+        <head>
+            <title>Search Results</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                    white-space: pre-wrap;
+                }
+                h2 {
+                    margin-bottom: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <h2>Search Results</h2>
+            <div>${content.replace(/\n/g, "<br>")}</div>
+        </body>
+        </html>
+    `;
+
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    win.print();
+}
+
 
 
 </script>
