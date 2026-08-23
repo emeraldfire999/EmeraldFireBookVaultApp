@@ -1470,7 +1470,7 @@ async function fetchAmazonMetadataFromImport() {
 
         if (data.series) document.getElementById('series').value = data.series;
         if (data.seriesNumber) document.getElementById('seriesNumber').value = data.seriesNumber;
-        if (data.url) document.getElementById('amazonURL').value = data.url;
+        if (data.url) document.getElementById('link').value = data.url;
         updatePreviewFromForm();
 
         /* ⭐ CREATE NEW CARD ⭐ */
@@ -2879,7 +2879,7 @@ async function addBook() {
         datePrinted: toISO(document.getElementById('datePrinted').value),
         reviewed: document.getElementById('reviewed').value,
         cover: document.getElementById('cover').value,
-        link: document.getElementById('amazonURL').value,
+        link: document.getElementById('link').value,
         status: document.getElementById('status').value,
         description: document.getElementById('description').value,
         timestamp: Date.now(),
@@ -2971,7 +2971,7 @@ function editBook(index) {
         document.getElementById('cover').value = book.cover;
     }
 
-    document.getElementById('amazonURL').value = book.link || '';
+    document.getElementById('link').value = book.link || '';
     document.getElementById('status').value = book.status || 'TBR';
     document.getElementById('description').value = book.description || '';
 
