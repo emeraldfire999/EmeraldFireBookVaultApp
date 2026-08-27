@@ -3006,9 +3006,17 @@ function editBook(index) {
     updatePreviewFromForm();
 
     /* ⭐ Auto-fetch updated Amazon metadata when editing ⭐ */
+
+    // ⭐ Re-extract ASIN from edited link
+    const editedLink = document.getElementById('link').value.trim();
+    const asinMatch = editedLink.match(/\/([A-Z0-9]{10})(?:[/?]|$)/i);
+
+    if (asinMatch) {
+        book.asin = asinMatch[1];
+    }
+
     if (book.source === "Amazon" && book.asin) {
         fetch(`https://storage-for-server.onrender.com/api/amazon/${book.asin}`)
-
             .then(res => res.json())
             .then(data => {
 
@@ -3045,6 +3053,7 @@ function editBook(index) {
             .catch(err => console.error("Amazon scraper error:", err));
     }
 }
+
 /*======================= go down=============== */
 function scrollToBottom() {
     window.scrollTo({
